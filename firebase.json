@@ -1,0 +1,32 @@
+{
+  "//": "Firebase Hosting only serves static files; Giant Money is a running Node server (SQLite + a 24/7 cron loop). So Hosting serves the CDN-friendly assets and rewrites every page and API request to the container on Cloud Run. See DEPLOY.md.",
+  "hosting": {
+    "public": "public",
+
+    "//ignore": "The .html files are deliberately NOT deployed. Firebase serves static files BEFORE applying rewrites, so a deployed public/index.html would hijack '/' and show the old /classic landing instead of the real one. Leaving the HTML out lets every page fall through to Cloud Run, which already routes them correctly.",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.html"
+    ],
+
+    "rewrites": [
+      { "source": "/api/**", "run": { "serviceId": "giant-money", "region": "us-central1" } },
+      { "source": "/healthz", "run": { "serviceId": "giant-money", "region": "us-central1" } },
+      { "source": "**", "run": { "serviceId": "giant-money", "region": "us-central1" } }
+    ],
+
+    "headers": [
+      {
+        "//": "app.js and styles.css change on every deploy, so never let a browser hold a stale copy.",
+        "source": "**/*.@(js|css)",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
+      },
+      {
+        "source": "**/*.@(svg|png|jpg|jpeg|ico|woff2)",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
+      }
+    ]
+  }
+}

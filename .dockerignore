@@ -1,0 +1,11 @@
+node_modules
+data
+.git
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.claude
+design
+vehicle-tracker

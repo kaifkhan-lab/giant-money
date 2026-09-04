@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Giant Money — Live Smart Money Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23f2f3f6'/%3E%3Ctext x='50' y='72' font-family='Georgia,serif' font-size='60' fill='%230a0b0f' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <div class="app-shell">
+  <aside class="side">
+    <a class="side-brand" href="/">
+      <span class="mark">G</span>
+      <span class="wm"><b>Giant Money</b></span>
+    </a>
+    <div class="side-label">Menu</div>
+    <nav id="nav" class="side-nav">
+      <a href="#dashboard" data-tab="dashboard" class="active"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span class="lbl">Dashboard</span></a>
+      <a href="#top1" data-tab="top1"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8z"/></svg></span><span class="lbl">Top 1%</span></a>
+      <a href="#politicians" data-tab="politicians"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5H3l9-5z"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"/></svg></span><span class="lbl">Politicians</span></a>
+      <a href="#insiders" data-tab="insiders"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span class="lbl">Insiders</span></a>
+      <a href="#stocks" data-tab="stocks"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l3-4 3 3 4-6"/></svg></span><span class="lbl">Stocks</span></a>
+      <a href="#news" data-tab="news"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="15" rx="1.5"/><path d="M17 8h3a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2M6 9h8M6 13h8M6 17h5"/></svg></span><span class="lbl">News</span></a>
+      <a href="#watchlist" data-tab="watchlist"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 5.9 6.1.9-4.5 4.4 1.1 6.1L12 17.8 6.4 20.3l1.1-6.1L3 9.8l6.1-.9L12 3z"/></svg></span><span class="lbl">Watchlist</span></a>
+      <a href="#portfolio" data-tab="portfolio"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7"/><path d="M3 12h18"/><path d="M11 12v2h2v-2"/></svg></span><span class="lbl">Portfolio</span></a>
+    </nav>
+    <div class="spacer"></div>
+    <a class="side-profile" href="#profile" id="sideProfile">
+      <div class="pfp" id="sidePfp">GM</div>
+      <div class="pi"><div class="pn" id="sidePn">Guest</div><div class="pp" id="sidePp">Free plan</div></div>
+      <span class="pg" title="Profile &amp; settings"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+    </a>
+  </aside>
+  <div class="app-content">
+  <main>
+    <!-- ═══════════ DASHBOARD ═══════════ -->
+    <section class="tab active" id="tab-dashboard">
+      <div class="page-head page-head-row">
+        <div>
+          <div class="kicker">Live · USA</div>
+          <h1>Dashboard.</h1>
+          <div class="sub">The US market at a glance — indexes, smart-money flow and insider activity, all from live filings and market data.</div>
+        </div>
+        <div class="notif-wrap">
+          <div class="page-alert notif-btn" role="button" tabindex="0">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Alerts <span class="notif-dot" hidden>0</span>
+          </div>
+          <div class="notif-panel" hidden></div>
+        </div>
+      </div>
+
+      <h2 class="section">US Markets <span class="sub" id="marketMeta"></span></h2>
+      <div class="grid cols-5" id="indexGrid"><div class="loading">Loading live index data…</div></div>
+      <div id="macroStrip"></div>
+
+      <h2 class="section">Institutional Stock Picks <span class="sub">ranked by the Giant Money Score — from live filings, disclosures &amp; news</span></h2>
+      <div class="card picks-card">
+        <div class="picks-head">
+          <h3 class="block-title" style="margin:0">Today's Institutional Stock Picks</h3>
+          <div class="filters" id="pickTabs" style="margin:0">
+            <button class="chip active" data-r="1d">1 Day</button>
+            <button class="chip" data-r="1w">Weekly</button>
+            <button class="chip" data-r="1m">Monthly</button>
+          </div>
+        </div>
+        <div id="pickList"><div class="loading">Loading…</div></div>
+      </div>
+
+
+      <h2 class="section">Who Bought Before the News?<span class="tm">™</span> <span class="sub">today's biggest movers — and who was quietly buying in the 14 days before</span></h2>
+      <div class="grid cols-3" id="detectiveGrid"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ═══════════ TOP 1% ═══════════ -->
+    <section class="tab" id="tab-top1">
+      <div id="top1Main">
+        <div class="page-head">
+          <div class="kicker">Big Investors</div>
+          <h1>The Top 1%.</h1>
+          <div class="sub">America's biggest investors have to tell the government which stocks they own. Pick a group below to see who's buying and selling.</div>
+        </div>
+        <div class="filters" id="top1Filters">
+          <button class="chip active" data-cat="all">All</button>
+          <button class="chip" data-cat="billionaire">💰 Billionaires</button>
+          <button class="chip" data-cat="hedge_fund">📊 Hedge Funds</button>
+          <button class="chip" data-cat="investment_bank">🏦 Investment Banks</button>
+          <button class="chip" data-cat="sovereign_wealth">👑 Sovereign Wealth Funds</button>
+        </div>
+        <details class="explainer" open>
+          <summary><span class="ex-eyebrow">◆ How to read this page</span><span class="ex-toggle"></span></summary>
+          <div class="ex-body">
+            <p class="ex-intro">The world's biggest funds are legally required to report every stock they own to the SEC each quarter. This page turns those raw filings into a plain list of <b>who owns what</b> — and what they just bought or sold.</p>
+            <div class="ex-defs">
+              <div class="ex-def"><b>AUM</b> — the total dollar value of everything that investor currently holds.</div>
+              <div class="ex-def"><b>Move pill</b> — their most recent action on a stock: New, Added, Trimmed or Exited.</div>
+              <div class="ex-def"><b>Groups</b> — 💰 Billionaire · 📊 Hedge Fund · 🏦 Investment Bank · 👑 Sovereign Wealth Fund. Use the chips above to filter.</div>
+              <div class="ex-def"><b>Open a card</b> — see the full portfolio plus a Shadow Portfolio: what $10,000 copied a year ago would be worth today.</div>
+            </div>
+            <div class="ex-src"><span class="ex-dot"></span> Source: SEC EDGAR — 13F filings · updated every quarter</div>
+          </div>
+        </details>
+        <div class="grid cols-4" id="fundGrid"><div class="loading">Loading…</div></div>
+        <h2 class="section">Position Changes <span class="sub">latest quarter vs prior quarter</span></h2>
+        <div class="grid cols-4" id="fundChanges"></div>
+        <h2 class="section">Recent Filing Activity</h2>
+        <div class="card tbl-wrap" id="fundFilings"></div>
+      </div>
+      <div id="top1Detail" style="display:none"></div>
+    </section>
+
+    <!-- ═══════════ POLITICIANS ═══════════ -->
+    <section class="tab" id="tab-politicians">
+      <div id="polMain">
+        <div class="page-head">
+          <div class="kicker">Official PTR Disclosures</div>
+          <h1>Politician Trades.</h1>
+          <div class="sub">Congressional trades from official disclosure filings — with party, chamber and disclosure-lag context. House PTRs link to the official filing document.</div>
+        </div>
+        <div class="filters" id="polTabs">
+          <button class="chip active" data-pv="trades">📜 Trades</button>
+          <button class="chip" data-pv="rankings">🏆 Rankings</button>
+          <button class="chip" data-pv="signals">📡 Smart Signals</button>
+          <button class="chip" data-pv="portfolios">💼 Congress Portfolios</button>
+        </div>
+        <details class="explainer" open>
+          <summary><span class="ex-eyebrow">◆ How to read this page</span><span class="ex-toggle"></span></summary>
+          <div class="ex-body">
+            <p class="ex-intro">US law (the <b>STOCK Act</b>) forces every member of Congress to disclose their personal stock trades. This page collects those official filings so you can see exactly what your representatives are trading.</p>
+            <div class="ex-defs">
+              <div class="ex-def"><b>Trade row</b> — who traded, which stock, buy or sell, the size range, and the date.</div>
+              <div class="ex-def"><b>Disclosure lag</b> — the gap between the trade and when it was reported; the law allows up to ~45 days.</div>
+              <div class="ex-def"><b>Sub-tabs</b> — Rankings (most active), Smart Signals (stocks many members are buying), Congress Portfolios (copy-the-Senate backtests).</div>
+              <div class="ex-def"><b>Open a member</b> — their full trade history and current holdings.</div>
+            </div>
+            <div class="ex-src"><span class="ex-dot"></span> Source: House Clerk PTR filings + U.S. Senate eFD disclosures</div>
+          </div>
+        </details>
+        <div id="polViewTrades">
+          <div style="display:flex; gap:10px; max-width:640px; flex-wrap:wrap; margin-top:4px">
+            <select id="polChamber" style="max-width:150px">
+              <option value="">Both chambers</option>
+              <option value="Senate">Senate</option>
+              <option value="House">House</option>
+            </select>
+            <select id="polSide" style="max-width:150px">
+              <option value="">All activity</option>
+              <option value="Buy">Buys</option>
+              <option value="Sell">Sells</option>
+              <option value="Filing">PTR filings</option>
+            </select>
+            <input id="polSearch" placeholder="Search politician, ticker or asset…" style="flex:1; min-width:220px" />
+          </div>
+          <div class="card tight tbl-wrap" style="margin-top:14px" id="polTable"><div class="loading">Loading…</div></div>
+        </div>
+        <div id="polViewRankings" style="display:none"><div class="loading">Loading…</div></div>
+        <div id="polViewSignals" style="display:none"><div class="loading">Loading…</div></div>
+        <div id="polViewPortfolios" style="display:none"><div class="loading">Loading…</div></div>
+      </div>
+      <div id="polDetail" style="display:none"></div>
+    </section>
+
+    <!-- ═══════════ INSIDERS ═══════════ -->
+    <section class="tab" id="tab-insiders">
+      <div class="page-head">
+        <div class="kicker">SEC Form 4 · Live</div>
+        <h1>Insider Trades.</h1>
+        <div class="sub">CEOs and boards trading their own stock — parsed from official SEC Form 4 filings the moment they're published. Clusters flagged automatically.</div>
+      </div>
+      <details class="explainer" open>
+        <summary><span class="ex-eyebrow">◆ How to read this page</span><span class="ex-toggle"></span></summary>
+        <div class="ex-body">
+          <p class="ex-intro">When a company's own executives or directors buy or sell their company's stock, the SEC makes them file a <b>Form 4</b> within two business days. This page reads those filings live — insiders know their business best, so their trades are worth watching.</p>
+          <div class="ex-defs">
+            <div class="ex-def"><b>Open-market buy</b> — an insider spending their own money on their own stock, often a confidence signal.</div>
+            <div class="ex-def"><b>Cluster</b> — several insiders at the same company buying around the same time; flagged automatically.</div>
+            <div class="ex-def"><b>Role</b> — CEO, CFO, Director or 10% owner — exactly who is trading.</div>
+            <div class="ex-def"><b>Sentiment</b> — the overall balance of insider buying versus selling across the market.</div>
+          </div>
+          <div class="ex-src"><span class="ex-dot"></span> Source: SEC Form 4 filings · live</div>
+        </div>
+      </details>
+      <div class="grid cols-4" id="insTiles2"></div>
+      <div class="card" id="insClusters" style="margin-top:14px"></div>
+      <h2 class="section">Latest Trades</h2>
+      <div class="grid cols-2" id="insTables2"></div>
+      <h2 class="section">Who's Buying <span class="sub">recent open-market purchases by role</span></h2>
+      <div class="grid cols-3" id="insRoles2"></div>
+      <h2 class="section">Biggest &amp; Most Active</h2>
+      <div class="grid cols-2" id="insLargeActive2"></div>
+      <h2 class="section">Insider Activity Ranking <span class="sub">auto-updated buy/sell strength</span></h2>
+      <div class="grid cols-4" id="insRankings2"></div>
+      <h2 class="section">Insider Sentiment <span class="sub">per-stock signal from open-market insider flow</span></h2>
+      <div class="card" id="insSentiment2"></div>
+    </section>
+
+    <!-- ═══════════ STOCKS ═══════════ -->
+    <section class="tab" id="tab-stocks">
+      <div class="page-head">
+        <div class="kicker">Live Quotes · SEC Fundamentals</div>
+        <h1>Stock Research.</h1>
+        <div class="sub">Search any US stock — live price, real fundamentals from SEC filings, and every smart-money move around it.</div>
+      </div>
+      <div class="filters" id="stkTabs">
+        <button class="chip active" data-sv="search">🔎 Search</button>
+        <button class="chip" data-sv="screener">🧮 Screener</button>
+        <button class="chip" data-sv="sectors">🗺 Sector Heatmap</button>
+        <button class="chip" data-sv="earnings">📅 Calendar</button>
+        <button class="chip" data-sv="dark">🌊 Dark Pools</button>
+        <button class="chip" data-sv="squeeze">🔥 Squeeze Radar</button>
+      </div>
+      <div id="stkViewSearch">
+        <div class="search-row">
+          <input id="stockSearch" placeholder="Search ticker or company (e.g. AAPL, Nvidia)…" autocomplete="off" />
+          <div class="suggestions" id="stockSuggest" style="display:none"></div>
+        </div>
+        <div id="stockDetail"></div>
+      </div>
+      <div id="stkViewScreener" style="display:none"><div class="loading">Loading…</div></div>
+      <div id="stkViewSectors" style="display:none"><div class="loading">Loading…</div></div>
+      <div id="stkViewEarnings" style="display:none"><div class="loading">Loading…</div></div>
+      <div id="stkViewDark" style="display:none"><div class="loading">Loading…</div></div>
+      <div id="stkViewSqueeze" style="display:none"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ═══════════ NEWS ═══════════ -->
+    <section class="tab" id="tab-news">
+      <div class="page-head">
+        <div class="kicker">Live Feeds · AI Analyzed</div>
+        <h1>Market News.</h1>
+        <div class="sub" id="newsMeta">Financial news from live feeds. Every article gets a plain-English AI brief: what happened — and why it matters.</div>
+      </div>
+      <div class="news-cats" id="newsCats"></div>
+      <div class="ai-filters" id="newsAI"></div>
+      <div id="newsList" style="margin-top:14px"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ═══════════ PROFILE ═══════════ -->
+    <section class="tab" id="tab-profile">
+      <div class="page-head"><div class="kicker">Your Account</div><h1>Profile.</h1></div>
+      <div id="profileBody"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ═══════════ WATCHLIST ═══════════ -->
+    <section class="tab" id="tab-watchlist">
+      <div class="page-head page-head-row">
+        <div>
+          <div class="kicker">Saved On This Device</div>
+          <h1>Watchlist.</h1>
+          <div class="sub">Save any US stock. We refresh its price and check for smart-money activity every time the backend loop runs — even while you're away.</div>
+        </div>
+        <div class="notif-wrap">
+          <div class="page-alert notif-btn" role="button" tabindex="0">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Alerts <span class="notif-dot" hidden>0</span>
+          </div>
+          <div class="notif-panel" hidden></div>
+        </div>
+      </div>
+      <div class="search-row">
+        <input id="wlSearch" placeholder="Add a ticker or company to your watchlist…" autocomplete="off" />
+        <div class="suggestions" id="wlSuggest" style="display:none"></div>
+      </div>
+      <div class="card tight tbl-wrap" style="margin-top:16px" id="wlQuotes"></div>
+
+      <h2 class="section">My Alert Rules <span class="sub">tell the app exactly what to watch for — it checks on every refresh</span></h2>
+      <div class="card" id="wlRules"></div>
+
+      <h2 class="section">Smart-Money Activity <span class="sub">real filings touching the stocks you're watching</span></h2>
+      <div class="card tight" id="wlEvents"></div>
+      <h2 class="section">What you can do here</h2>
+      <div class="grid cols-3" id="wlCaps"></div>
+    </section>
+
+    <!-- ═══════════ PORTFOLIO ═══════════ -->
+    <section class="tab" id="tab-portfolio">
+      <div class="page-head">
+        <div class="kicker">Saved On This Device</div>
+        <h1>My Portfolio.</h1>
+        <div class="sub">Add the stocks you actually own and see your profit or loss update with live prices. Nothing is sent anywhere — it stays on this device.</div>
+      </div>
+      <div id="pfBody"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ═══════════ PRICING ═══════════ -->
+    <section class="tab" id="tab-pricing">
+      <div class="page-head" style="text-align:center">
+        <div class="kicker" style="letter-spacing:.4em">Pricing</div>
+        <h1>One plan. Everything unlocked.</h1>
+      </div>
+      <div style="display:flex; justify-content:center; margin-top:10px">
+        <div class="price-card">
+          <div class="plan">Giant Money</div>
+          <div style="display:flex; align-items:baseline; gap:6px; margin:14px 0 24px"><span class="amount">$14</span><span style="font-size:14px; color:var(--muted-2)">/ month</span></div>
+          <div class="feat">
+            <span>◦&nbsp; Every tracked fund &amp; bank, real-time</span>
+            <span>◦&nbsp; Politician + insider feeds with AI context</span>
+            <span>◦&nbsp; Live market indexes and stock research</span>
+            <span>◦&nbsp; AI-analyzed financial news, 24/7</span>
+          </div>
+          <a class="btn-primary" href="#dashboard" style="margin-top:30px; text-decoration:none">Start</a>
+          <div style="font-size:12px; color:var(--muted-2); text-align:center; margin-top:12px">Cancel anytime</div>
+        </div>
+      </div>
+      <div style="max-width:760px; margin:60px auto 0">
+        <h2 class="section">Beginner FAQ</h2>
+        <div class="faq-item"><div class="q">What is a 13F filing?</div><div class="a">Every quarter, big investment firms managing over $100M must tell the SEC exactly which US stocks they hold. That report is called a 13F. It's how we know what Warren Buffett or Citadel actually own — it's public, official paperwork, and Giant Money reads it directly from SEC EDGAR.</div></div>
+        <div class="faq-item"><div class="q">What is a PTR?</div><div class="a">A Periodic Transaction Report. US senators and representatives must disclose their personal stock trades, usually within 45 days. We track these official disclosures and flag when a filing came in later than the law allows.</div></div>
+        <div class="faq-item"><div class="q">What is a Form 4?</div><div class="a">When a CEO, CFO, director or large owner buys or sells their own company's stock, they must report it to the SEC within 2 business days on a Form 4. Insider buying is often watched closely — executives know their business best.</div></div>
+        <div class="faq-item"><div class="q">Where does the data come from?</div><div class="a">Only live public sources: SEC EDGAR (13F, Form 4, company fundamentals), official Senate and House disclosures, live market data and real financial news feeds. Nothing is simulated or made up — if a number isn't available yet, we show a dash instead of a fake value.</div></div>
+        <div class="faq-item"><div class="q">How fresh is it?</div><div class="a">A real backend scheduler runs around the clock: market data every 60 seconds, insider filings every 5 minutes, news every 3 minutes, fund filings and politician disclosures several times a day — even when nobody is on the site.</div></div>
+        <div class="faq-item"><div class="q">Is this investment advice?</div><div class="a">No. Giant Money is a research tool that organizes public information. It doesn't recommend buying or selling anything. Always do your own research.</div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div style="margin-right:auto">
+        <div class="logo"><span class="mark" style="width:32px;height:32px;font-size:19px">G</span><span class="word" style="font-size:17px">Giant Money</span></div>
+        <div class="footer-tag">See where smart money moves.</div>
+        <div class="footer-disc">All data is derived from public disclosures (13F, Form 4, PTR). Giant Money is a research tool — not investment advice.</div>
+        <div class="footer-loop" id="loopStatus">backend loop: starting…</div>
+      </div>
+      <div class="footer-cols">
+        <div class="col"><b>Product</b><a href="#top1">Top 1% Investors</a><a href="#politicians">Politician Trades</a><a href="#insiders">Insider Trades</a><a href="#stocks">Stock Research</a><a href="#news">Market News</a><a href="#watchlist">Watchlist</a></div>
+        <div class="col"><b>Company</b><a href="#pricing">Pricing</a><a href="#pricing">FAQ</a><a href="/">Landing page</a></div>
+        <div class="col"><b>Legal</b><a href="#pricing">Disclosures</a></div>
+      </div>
+    </div>
+  </footer>
+  </div><!-- /.app-content -->
+  </div><!-- /.app-shell -->
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# runtime data — the app rebuilds all of this from live sources on first run
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# secrets & local config
+.env
+.claude/settings.local.json
+
+# logs & OS noise
+*.log
+nohup.out
+.DS_Store
+
+# local screenshots / scratch
+*.png
+!public/**/*.png

@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <!-- Minimalist cinematic maritime scene · 3 tones: charcoal-navy / muted gold / silver-grey
+       Ambient motion: the scene breathes — nothing "happens".
+       Moving layers (only 3): boat rock · water shimmer · mist drift, plus one
+       ultra-slow breathing push-in. All ease-in-out, loop-seamless, ≤5% light shift. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#070A11"/>
+      <stop offset=".62" stop-color="#0A0E14"/>
+      <stop offset="1" stop-color="#0D1119"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0C1018"/>
+      <stop offset=".5" stop-color="#090D14"/>
+      <stop offset="1" stop-color="#070A10"/>
+    </linearGradient>
+    <radialGradient id="horizonGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#C7CEDC" stop-opacity=".13"/>
+      <stop offset=".55" stop-color="#C7CEDC" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#C7CEDC" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="horizonGlowWide" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#AEB6C6" stop-opacity=".07"/>
+      <stop offset="1" stop-color="#AEB6C6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#B8934A" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#D4AC5E" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#B8934A" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="goldTrail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9A75A" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#C9A75A" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B9C1D0" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#B9C1D0" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#B9C1D0" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="soft2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.055"/></feComponentTransfer>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+
+    <style>
+      /* motion is ambient, not performative — heavy, expensive, silk-and-liquid-metal */
+      #cam, #boatRock, #mistA, #mistB, #trail, #hairlines, #glowBand {
+        transform-box: fill-box;
+      }
+      /* one single camera move: breathing push-in, 2% over the cycle */
+      #cam { transform-origin: 63% 67%; animation: camBreathe 26s ease-in-out infinite alternate; }
+      @keyframes camBreathe { from { transform: scale(1); } to { transform: scale(1.02); } }
+
+      /* the boat rocks almost imperceptibly — 7.5s cycle */
+      #boatRock { transform-origin: 50% 88%; animation: rock 7.5s ease-in-out infinite alternate; }
+      @keyframes rock {
+        from { transform: rotate(-0.35deg) translateY(0px); }
+        to   { transform: rotate(0.35deg)  translateY(-2.2px); }
+      }
+
+      /* water shimmer: the gold trail and hairlines breathe like liquid metal */
+      #trail { animation: shimmer 8s ease-in-out infinite alternate; }
+      @keyframes shimmer {
+        from { opacity: .78; transform: translateX(0px); }
+        to   { opacity: 1;   transform: translateX(1.6px); }
+      }
+      #hairlines { animation: hairBreathe 11s ease-in-out 2s infinite alternate; }
+      @keyframes hairBreathe { from { opacity: .72; } to { opacity: 1; } }
+
+      /* mist drift: foreground layer slightly faster than the far one (parallax) */
+      #mistA { animation: driftA 30s ease-in-out infinite alternate; }
+      @keyframes driftA { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+      #mistB { animation: driftB 21s ease-in-out infinite alternate; }
+      @keyframes driftB { from { transform: translateX(10px); } to { transform: translateX(-14px); } }
+
+      /* light shifts by no more than 5% across the clip */
+      #glowBand { animation: lightBreathe 13s ease-in-out infinite alternate; }
+      @keyframes lightBreathe { from { opacity: .955; } to { opacity: 1; } }
+
+      @media (prefers-reduced-motion: reduce) {
+        #cam, #boatRock, #mistA, #mistB, #trail, #hairlines, #glowBand { animation: none; }
+      }
+    </style>
+  </defs>
+
+  <g id="cam">
+    <!-- sky: vast negative space for overlay text -->
+    <rect x="-40" y="-24" width="2000" height="754" fill="url(#sky)"/>
+    <!-- sea: glass-calm -->
+    <rect x="-40" y="730" width="2000" height="374" fill="url(#sea)"/>
+
+    <!-- single soft light source at the horizon (breathes ≤5%) -->
+    <g id="glowBand">
+      <ellipse cx="1140" cy="732" rx="760" ry="150" fill="url(#horizonGlowWide)"/>
+      <ellipse cx="1190" cy="731" rx="430" ry="80" fill="url(#horizonGlow)"/>
+      <ellipse cx="1235" cy="729" rx="560" ry="52" fill="url(#horizonGlow)" opacity="1.5"/>
+      <ellipse cx="1235" cy="728" rx="380" ry="26" fill="#C7CEDC" opacity=".065"/>
+    </g>
+
+    <!-- horizon hairline -->
+    <rect x="-40" y="729.4" width="2000" height="1.2" fill="#AEB6C6" opacity=".10"/>
+    <rect x="640" y="729.2" width="900" height="1.4" fill="url(#goldLine)" opacity=".38"/>
+
+    <!-- atmospheric haze band separating boat from background -->
+    <rect x="-40" y="694" width="2000" height="72" fill="url(#mist)"/>
+    <ellipse id="mistA" cx="620" cy="722" rx="520" ry="26" fill="#B9C1D0" opacity=".028" filter="url(#soft)"/>
+    <ellipse id="mistB" cx="1560" cy="712" rx="420" ry="20" fill="#B9C1D0" opacity=".022" filter="url(#soft)"/>
+
+    <!-- ── merchant sailboat · small backlit silhouette, right third ── -->
+    <g id="boatRock">
+      <g transform="translate(1230 722) scale(1.28) translate(-1230 -722)">
+        <!-- rigging: hairline silver -->
+        <g stroke="#9AA3B5" stroke-width="1" opacity=".4">
+          <line x1="1247" y1="560" x2="1136" y2="704"/>
+          <line x1="1247" y1="560" x2="1311" y2="706"/>
+          <line x1="1201" y1="596" x2="1247" y2="620"/>
+        </g>
+        <!-- masts -->
+        <rect x="1245.6" y="558" width="2.8" height="156" fill="#05070C"/>
+        <rect x="1199.8" y="594" width="2.4" height="120" fill="#05070C"/>
+        <!-- bowsprit -->
+        <line x1="1168" y1="708" x2="1122" y2="698" stroke="#05070C" stroke-width="3" stroke-linecap="round"/>
+        <!-- jib (fore sail) with muted gold luff edge -->
+        <path d="M 1196 601 L 1196 706 L 1132 703 Z" fill="#080B12"/>
+        <path d="M 1196 601 L 1132 703" stroke="#C9A75A" stroke-width="2" opacity=".9" stroke-linecap="round"/>
+        <!-- main gaff sail -->
+        <path d="M 1251 566 L 1305 590 L 1312 704 L 1251 708 Z" fill="#080B12"/>
+        <path d="M 1251 566 L 1305 590" stroke="#AEB6C6" stroke-width="1.2" opacity=".65"/>
+        <path d="M 1305 590 L 1312 704" stroke="#8F97A9" stroke-width="1" opacity=".35"/>
+        <!-- staysail between masts -->
+        <path d="M 1243 590 L 1243 706 L 1206 704 Z" fill="#06090F"/>
+        <!-- gold pennant tip -->
+        <path d="M 1247 556 L 1262 560 L 1247 564 Z" fill="#C9A75A" opacity=".9"/>
+        <!-- hull: sleek true-black silhouette with silver sheer highlight -->
+        <path d="M 1150 710 L 1322 710 C 1314 726, 1296 736, 1240 736 C 1186 736, 1162 726, 1150 710 Z" fill="#05070C"/>
+        <path d="M 1152 711 L 1320 711" stroke="#C7CEDC" stroke-width="1.2" opacity=".5"/>
+        <!-- tiny crew silhouettes -->
+        <rect x="1226" y="700" width="3" height="9" rx="1.5" fill="#04060A"/>
+        <rect x="1270" y="701" width="3" height="8" rx="1.5" fill="#04060A"/>
+      </g>
+    </g>
+
+    <!-- ── reflection on glass water ── -->
+    <g opacity=".55" transform="translate(1230 740) scale(1.28 1.2) translate(-1230 -740)">
+      <path d="M 1150 740 L 1322 740 C 1300 752, 1188 752, 1150 740 Z" fill="#0D1119" opacity=".55" filter="url(#soft2)"/>
+      <path d="M 1251 744 L 1308 744 L 1300 806 L 1256 810 Z" fill="#10151F" opacity=".22" filter="url(#soft)"/>
+      <path d="M 1196 744 L 1150 744 L 1180 798 L 1200 796 Z" fill="#10151F" opacity=".18" filter="url(#soft)"/>
+    </g>
+    <!-- long muted-gold reflection line + liquid-metal trail -->
+    <g id="trail">
+      <rect x="1118" y="740" width="230" height="2" fill="url(#goldLine)"/>
+      <g fill="url(#goldTrail)">
+        <rect x="1196" y="748" width="86" height="1.5" opacity=".7"/>
+        <rect x="1216" y="762" width="52" height="1.4" opacity=".55"/>
+        <rect x="1206" y="782" width="66" height="1.2" opacity=".4"/>
+        <rect x="1228" y="810" width="36" height="1.1" opacity=".3"/>
+        <rect x="1214" y="846" width="48" height="1" opacity=".2"/>
+        <rect x="1232" y="892" width="26" height="1" opacity=".13"/>
+      </g>
+    </g>
+
+    <!-- calm water hairlines -->
+    <g id="hairlines" stroke="#AEB6C6" stroke-width="1">
+      <line x1="180" y1="775" x2="640" y2="775" opacity=".045"/>
+      <line x1="960" y1="800" x2="1520" y2="800" opacity=".04"/>
+      <line x1="300" y1="845" x2="880" y2="845" opacity=".035"/>
+      <line x1="1300" y1="930" x2="1820" y2="930" opacity=".03"/>
+      <line x1="90" y1="975" x2="560" y2="975" opacity=".025"/>
+    </g>
+  </g>
+
+  <!-- faint film grain — static, outside the camera move -->
+  <rect width="1920" height="1080" filter="url(#grain)" opacity=".5"/>
+</svg>

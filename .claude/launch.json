@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "giant-money",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "autoPort": true,
+      "port": 4600
+    }
+  ]
+}

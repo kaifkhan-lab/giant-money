@@ -1,0 +1,17 @@
+# Keep the Cloud Build upload small and free of anything secret or machine-local.
+# node_modules is deliberately excluded: the Dockerfile runs `npm ci` so that
+# better-sqlite3 is compiled for the container, not for this Mac.
+.git
+.gitignore
+node_modules
+data
+vehicle-tracker
+.claude
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+design
+*.pdf
+*.zip

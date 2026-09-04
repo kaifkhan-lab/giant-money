@@ -1,0 +1,178 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — Giant Money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--panel:rgba(255,255,255,.045);--line:rgba(255,255,255,.10);--line-2:rgba(255,255,255,.18);
+  --text:#EDF0F8;--muted:#8A93A8;--muted-2:#5C657C;--gold:#EAB308;--green:#22C55E;--green-deep:#16A34A;--red:#EF4444;
+  --sans:'Instrument Sans',-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--serif:'DM Serif Display',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{color-scheme:dark}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:grid;place-items:center;padding:24px;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+/* same ambient backdrop as the landing, so signing in does not feel like a different product */
+.glow{position:fixed;width:70vw;height:70vw;border-radius:50%;pointer-events:none;z-index:0}
+.g1{background:radial-gradient(circle,rgba(34,197,94,.22) 0%,transparent 62%);top:-30vw;left:-18vw}
+.g2{background:radial-gradient(circle,rgba(234,179,8,.14) 0%,transparent 62%);bottom:-32vw;right:-20vw}
+
+.card{position:relative;z-index:2;width:min(430px,100%);background:rgba(10,14,26,.72);backdrop-filter:blur(22px);
+  border:1px solid var(--line);border-radius:22px;padding:clamp(26px,5vw,38px);box-shadow:0 30px 90px rgba(0,0,0,.55)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px;margin-bottom:26px}
+.brand .m{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#fff,#cfd6e4);color:#05070F;
+  display:grid;place-items:center;font-family:var(--serif);font-size:20px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:13.5px;line-height:1.6;margin-top:8px}
+
+.tabs{display:flex;gap:4px;background:rgba(150,158,180,.08);padding:4px;border-radius:12px;margin:22px 0 20px}
+.tab{flex:1;padding:9px;border-radius:9px;border:0;background:transparent;color:var(--muted);
+  font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:background-color .15s,color .15s}
+.tab.on{background:rgba(255,255,255,.09);color:var(--text)}
+
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+input{width:100%;padding:12px 14px;border-radius:11px;background:rgba(255,255,255,.04);
+  border:1px solid var(--line-2);color:var(--text);font-family:var(--sans);font-size:14.5px;margin-bottom:15px}
+input:focus{outline:none;border-color:rgba(34,197,94,.55);background:rgba(255,255,255,.06)}
+.hint{font-size:11px;color:var(--muted-2);margin:-10px 0 15px}
+
+button.go{width:100%;padding:13px;border:0;border-radius:12px;cursor:pointer;font-family:var(--sans);
+  font-size:14.5px;font-weight:700;color:#03170b;background:linear-gradient(135deg,#34e07a,var(--green-deep));
+  box-shadow:0 8px 26px rgba(34,197,94,.3);transition:transform .15s,opacity .15s}
+button.go:hover{transform:translateY(-1px)}
+button.go[disabled]{opacity:.6;cursor:not-allowed;transform:none}
+
+.msg{font-size:13px;line-height:1.55;padding:11px 13px;border-radius:10px;margin-bottom:16px;display:none}
+.msg.err{display:block;color:#ffb4bd;background:rgba(239,68,68,.11);border:1px solid rgba(239,68,68,.32)}
+.msg.ok{display:block;color:#9df0c4;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.32)}
+
+.foot{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted-2);line-height:1.7}
+.foot a{color:var(--gold)}
+.skip{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--muted)}
+.skip:hover{color:var(--text)}
+.why{font-size:11.5px;color:var(--muted-2);line-height:1.65;margin-top:14px}
+</style>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="card">
+  <a class="brand" href="/"><span class="m">G</span> Giant Money</a>
+
+  <h1 id="title">Welcome back</h1>
+  <p class="sub" id="blurb">Sign in so your watchlist, portfolio and alerts follow you to any device.</p>
+
+  <div class="tabs">
+    <button class="tab on" data-mode="login" type="button">Sign in</button>
+    <button class="tab" data-mode="signup" type="button">Create account</button>
+  </div>
+
+  <div class="msg" id="msg"></div>
+
+  <form id="form" autocomplete="on">
+    <div id="nameRow" style="display:none">
+      <label for="name">Your name</label>
+      <input id="name" name="name" type="text" maxlength="40" autocomplete="name" placeholder="Hasan">
+    </div>
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required minlength="8"
+           autocomplete="current-password" placeholder="At least 8 characters">
+    <div class="hint" id="pwHint" style="display:none">Use at least 8 characters. Longer is stronger than complicated.</div>
+
+    <button class="go" id="go" type="submit">Sign in</button>
+  </form>
+
+  <a class="skip" href="/app">Continue without an account →</a>
+
+  <div class="foot">
+    Your password is never stored — only an unreadable hash of it. Market data on Giant Money is public
+    either way; an account exists so <b>your own</b> lists are saved to you rather than to one browser.
+    <br><br>
+    Giant Money is an information platform built on public filings. It is
+    <b>not investment advice</b>, and nothing here is a recommendation to buy or sell anything.
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let mode = 'login';
+
+const show = (text, kind) => {
+  const m = $('#msg');
+  m.textContent = text;
+  m.className = 'msg ' + kind;
+};
+const clearMsg = () => { $('#msg').className = 'msg'; };
+
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  mode = t.dataset.mode;
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+  const signup = mode === 'signup';
+  $('#title').textContent = signup ? 'Create your account' : 'Welcome back';
+  $('#blurb').textContent = signup
+    ? 'Free, and it takes a few seconds. Your lists are then tied to you, not to this browser.'
+    : 'Sign in so your watchlist, portfolio and alerts follow you to any device.';
+  $('#nameRow').style.display = signup ? '' : 'none';
+  $('#pwHint').style.display = signup ? '' : 'none';
+  $('#go').textContent = signup ? 'Create account' : 'Sign in';
+  $('#password').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+  clearMsg();
+}));
+
+$('#form').addEventListener('submit', async e => {
+  e.preventDefault();
+  clearMsg();
+  const btn = $('#go');
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = mode === 'signup' ? 'Creating…' : 'Signing in…';
+
+  try {
+    const res = await fetch('/api/auth/' + mode, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: $('#email').value,
+        password: $('#password').value,
+        ...(mode === 'signup' ? { name: $('#name').value } : {}),
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      show(data.error || 'Something went wrong. Try again.', 'err');
+      return;
+    }
+    show('Signed in. Taking you to the app…', 'ok');
+    // hand any lists this browser already has to the new account, once
+    try {
+      const local = {
+        watchlist: JSON.parse(localStorage.getItem('gm_watchlist') || '[]'),
+        portfolio: JSON.parse(localStorage.getItem('gm_portfolio') || '[]'),
+        alert_rules: JSON.parse(localStorage.getItem('gm_alert_rules') || '[]'),
+      };
+      if (local.watchlist.length || local.portfolio.length || local.alert_rules.length) {
+        await fetch('/api/me/data', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(local),
+        });
+      }
+    } catch { /* migration is a convenience, never a blocker */ }
+    location.href = '/app';
+  } catch {
+    show('Could not reach the server. Is it running?', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+});
+
+// already signed in? skip the form
+fetch('/api/auth/me').then(r => r.json()).then(d => {
+  if (d.user) location.replace('/app');
+}).catch(() => {});
+</script>

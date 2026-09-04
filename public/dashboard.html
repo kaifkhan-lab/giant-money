@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giant Money — Live Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23f2f3f6'/%3E%3Ctext x='50' y='72' font-family='Georgia,serif' font-size='60' fill='%230a0b0f' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<style>
+  body { background: var(--bg); }
+  /* main */
+  .dash-main { padding: 26px 34px 60px; max-width: 1180px; }
+  .dash-top { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .dash-top h1 { font-family: var(--serif); font-weight: 400; font-size: 34px; }
+  .dash-search {
+    margin-left: auto; display: flex; align-items: center; gap: 9px;
+    background: var(--bg-soft); border: 1px solid var(--line-2); border-radius: 10px;
+    padding: 10px 15px; font-size: 12.5px; color: var(--muted-2); min-width: 240px;
+  }
+  .dash-alert { display: flex; align-items: center; gap: 7px; color: var(--down); font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .dash-alert svg { width: 19px; height: 19px; stroke: var(--gold); }
+  .dash-av { width: 36px; height: 36px; border-radius: 10px; background: #1b1f29; border: 1px solid var(--line-3); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  /* index cards */
+  .idx-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 22px; }
+  .idx {
+    background: var(--panel); border: 1px solid var(--line-2); border-radius: 12px; padding: 15px 16px;
+  }
+  .idx .nm { font-size: 11px; color: var(--muted); font-weight: 600; min-height: 30px; }
+  .idx .px { font-family: var(--serif); font-size: 26px; margin-top: 6px; }
+  .idx .ch { font-family: var(--mono); font-size: 11.5px; margin-top: 5px; }
+  .idx .st { font-family: var(--mono); font-size: 9.5px; color: var(--muted-3); margin-top: 8px; }
+  /* two-col */
+  .dash-cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; }
+  .panel { background: var(--panel); border: 1px solid var(--line-2); border-radius: 12px; padding: 18px 20px; }
+  .panel h3 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .mv { display: grid; grid-template-columns: 1.5fr 70px 62px; gap: 8px; align-items: center; padding: 11px 0; border-top: 1px solid var(--hair); }
+  .mv:first-of-type { border-top: none; }
+  .mv .co { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .mv .co .lg { width: 28px; height: 28px; border-radius: 7px; background: #fff; display: grid; place-items: center; overflow: hidden; flex: none; }
+  .mv .co .lg img { width: 20px; height: 20px; object-fit: contain; }
+  .mv .co .lg.blank { background: #1b1f29; color: var(--muted); font-family: var(--mono); font-size: 9px; font-weight: 600; }
+  .mv .co .nm { font-size: 12.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mv .co .tk { font-family: var(--mono); font-size: 9px; color: var(--muted-2); }
+  .mv .pr { font-family: var(--mono); font-size: 11.5px; text-align: right; color: var(--text-2); }
+  .mv .pc { font-family: var(--mono); font-size: 11.5px; text-align: right; }
+  .rm { display: flex; gap: 11px; padding: 12px 0; border-top: 1px solid var(--hair); }
+  .rm:first-of-type { border-top: none; }
+  .rm .av { width: 30px; height: 30px; border-radius: 99px; background: #1b1f29; border: 1px solid var(--line-3); overflow: hidden; flex: none; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: var(--muted); }
+  .rm .av img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.88); }
+  .rm .bd { flex: 1; min-width: 0; }
+  .rm .bd .t { display: flex; justify-content: space-between; gap: 8px; }
+  .rm .bd .who { font-size: 12.5px; font-weight: 700; }
+  .rm .bd .dt { font-family: var(--mono); font-size: 9px; color: var(--muted-3); }
+  .rm .bd .ac { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rm .bd .amt { font-family: var(--mono); font-size: 10px; margin-top: 3px; }
+  .up { color: var(--up); } .down { color: var(--down); }
+  .backlink { font-size: 12.5px; color: var(--muted-2); margin-top: 26px; display: inline-block; }
+  .backlink:hover { color: var(--gold); }
+  @media (max-width: 900px) {
+    .idx-grid { grid-template-columns: 1fr 1fr; } .dash-cols { grid-template-columns: 1fr; }
+    .dash-main { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <a class="side-brand" href="/">
+      <span class="mark">G</span>
+      <span class="wm"><b>Giant Money</b></span>
+    </a>
+    <div class="side-label">Menu</div>
+    <nav class="side-nav">
+      <a class="active" href="/dashboard"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span class="lbl">Dashboard</span></a>
+      <a href="/app#top1"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8z"/></svg></span><span class="lbl">Top 1%</span></a>
+      <a href="/app#politicians"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5H3l9-5z"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"/></svg></span><span class="lbl">Politicians</span></a>
+      <a href="/app#insiders"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><span class="lbl">Insiders</span></a>
+      <a href="/app#stocks"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l3-4 3 3 4-6"/></svg></span><span class="lbl">Stocks</span></a>
+      <a href="/app#news"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="15" rx="1.5"/><path d="M17 8h3a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2M6 9h8M6 13h8M6 17h5"/></svg></span><span class="lbl">News</span></a>
+      <a href="/app#watchlist"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 5.9 6.1.9-4.5 4.4 1.1 6.1L12 17.8 6.4 20.3l1.1-6.1L3 9.8l6.1-.9L12 3z"/></svg></span><span class="lbl">Watchlist</span></a>
+    </nav>
+    <div class="spacer"></div>
+    <a class="side-profile" href="/app#profile">
+      <div class="pfp">GM</div>
+      <div class="pi"><div class="pn">Guest</div><div class="pp">Free plan</div></div>
+      <span class="pg" title="Profile &amp; settings"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+    <div class="dash-top">
+      <h1>Dashboard</h1>
+      <div class="dash-search">⌕&nbsp; Search stocks, investors…</div>
+      <a class="dash-alert" href="/app#dashboard" title="Open alerts in the app">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Alerts
+      </a>
+      <div class="dash-av">GM</div>
+    </div>
+
+    <div class="idx-grid" id="idxGrid"><div class="loading" style="grid-column:1/-1">Loading live index data…</div></div>
+
+    <div class="dash-cols">
+      <div class="panel">
+        <h3>Top Market Movers</h3>
+        <div id="movers"><div class="loading">Loading…</div></div>
+      </div>
+      <div class="panel">
+        <h3>Recent moves</h3>
+        <div id="recent"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const usd = v => v == null ? '—' : (v<0?'−':'') + (Math.abs(v)>=1e9?'$'+(Math.abs(v)/1e9).toFixed(1)+'B':Math.abs(v)>=1e6?'$'+(Math.abs(v)/1e6).toFixed(1)+'M':Math.abs(v)>=1e3?'$'+(Math.abs(v)/1e3).toFixed(0)+'K':'$'+Math.round(Math.abs(v)));
+const SHOT = { '^GSPC':'S&P 500', '^IXIC':'Nasdaq', '^DJI':'Dow Jones', '^RUT':'Russell 2000', '^DWCF':'Total US Stock Market (DJ US TSM)' };
+const MOVEACT = { new:'Opened', increased:'Increased', reduced:'Reduced', closed:'Exited' };
+
+async function load() {
+  let d;
+  try { d = await (await fetch('/api/landing')).json(); } catch { return; }
+
+  document.getElementById('idxGrid').innerHTML = (d.indexes ?? []).slice(0,5).map(ix => `
+    <div class="idx">
+      <div class="nm">${esc(SHOT[ix.symbol] ?? ix.name)}</div>
+      <div class="px">${ix.price != null ? Math.round(ix.price).toLocaleString() : '—'}</div>
+      <div class="ch ${(ix.change_1d ?? 0) >= 0 ? 'up' : 'down'}">${ix.change_1d != null ? (ix.change_1d>=0?'+':'')+ix.change_1d.toFixed(2)+'%' : 'awaiting data'}</div>
+      <div class="st">● Market ${esc(ix.market_state ?? '—')}</div>
+    </div>`).join('') || '<div class="empty" style="grid-column:1/-1">Waiting for the first market cycle…</div>';
+
+  document.getElementById('movers').innerHTML = (d.movers ?? []).map(m => `
+    <div class="mv">
+      <div class="co">
+        <div class="lg"><img src="https://images.financialmodelingprep.com/symbol/${esc(m.symbol)}.png" alt="" onerror="this.parentElement.classList.add('blank');this.parentElement.textContent='${esc(m.symbol).slice(0,3)}'"></div>
+        <div style="min-width:0"><div class="nm">${esc(String(m.name).slice(0,20))}</div><div class="tk">${esc(m.symbol)}</div></div>
+      </div>
+      <span class="pr">$${(m.price ?? 0).toFixed(2)}</span>
+      <span class="pc ${m.change_pct>=0?'up':'down'}">${m.change_pct>=0?'+':''}${(m.change_pct ?? 0).toFixed(1)}%</span>
+    </div>`).join('') || '<div class="empty">Quotes loading…</div>';
+
+  document.getElementById('recent').innerHTML = (d.recentMoves ?? []).map(m => {
+    const initials = String(m.manager !== '—' ? m.manager : m.fund).split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    return `
+    <div class="rm">
+      <div class="av">${esc(initials)}${m.photo ? `<img src="${esc(m.photo)}" alt="" onerror="this.remove()">` : ''}</div>
+      <div class="bd">
+        <div class="t"><span class="who">${esc(m.manager !== '—' ? m.manager : m.fund)}</span><span class="dt">${esc(m.filed_at ?? '')}</span></div>
+        <div class="ac">${esc(MOVEACT[m.change_type] ?? m.change_type)} ${esc(String(m.issuer).toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase()).slice(0,22))} ${m.ticker?'$'+esc(m.ticker):''}</div>
+        <div class="amt ${m.dv>=0?'up':'down'}">${m.dv>=0?'+':'−'}${usd(Math.abs(m.dv)).replace('−','')}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty">13F ingestion in progress…</div>';
+}
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>

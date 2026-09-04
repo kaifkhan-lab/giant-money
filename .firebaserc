@@ -1,0 +1,6 @@
+{
+  "//": "Replace giant-money-app with your real Firebase project id (the one shown in the Firebase console URL). `firebase use --add` will write this for you.",
+  "projects": {
+    "default": "giant-money-app"
+  }
+}

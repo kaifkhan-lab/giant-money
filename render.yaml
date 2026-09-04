@@ -1,0 +1,47 @@
+# Render blueprint — the no-CLI way to host Giant Money.
+#
+# Render reads this file when you point it at the repo, so there is nothing to
+# configure by hand: it installs, builds better-sqlite3, mounts a disk for the
+# SQLite database, and starts the server with the 24/7 filing loop.
+services:
+  - type: web
+    name: giant-money
+    runtime: node
+    plan: starter          # 'free' also works, but see the note at the bottom
+    region: virginia       # closest to the SEC / market-data hosts
+    branch: main
+
+    buildCommand: npm ci
+    startCommand: node src/index.js
+
+    healthCheckPath: /healthz
+
+    # The database and the Yahoo cookie jar live here and survive redeploys.
+    disk:
+      name: gm-data
+      mountPath: /data
+      sizeGB: 1
+
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /data
+      - key: NODE_ENV
+        value: production
+      # EDGAR throttles anonymous traffic — put a real address here after deploy.
+      - key: SEC_USER_AGENT
+        value: GIANT-MONEY research you@example.com
+      # Optional: set this in the dashboard to get Claude-written news summaries.
+      # Without it the app uses a clearly-labelled local fallback.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+# ── About the plan ───────────────────────────────────────────────────────────
+# 'starter' is the cheapest always-on plan and the one this app really wants,
+# because two things break when a server is allowed to sleep:
+#   · the node-cron loop stops, so no new filings are ingested
+#   · a disk cannot be attached on the free plan, so the SQLite file — including
+#     user accounts — is lost on every restart
+# The free plan is fine for showing the app to someone for an afternoon: remove
+# the `disk:` block and set plan: free.

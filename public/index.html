@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giant Money — See where smart money moves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23f2f3f6'/%3E%3Ctext x='50' y='72' font-family='Georgia,serif' font-size='60' fill='%230a0b0f' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<style>
+html,body{margin:0;padding:0;background:#0a0b0f}
+*{box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+@keyframes gm-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes gm-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes gm-twinkle{0%,100%{opacity:.9}50%{opacity:.15}}
+@keyframes gm-twinkle2{0%,100%{opacity:.25}50%{opacity:.85}}
+@keyframes gm-shine{0%{background-position:200% center}100%{background-position:-200% center}}
+.navlink{cursor:pointer;transition:color .15s}
+.navlink:hover{color:#fff}
+.gm-card{background:#12141c;border:1px solid rgba(150,158,180,.14);border-radius:18px;padding:28px;transition:border-color .2s}
+.gm-card:hover{border-color:rgba(150,158,180,.3)}
+.gm-btn{background:#f2f3f6;color:#0a0b0f;transition:background .15s}
+.gm-btn:hover{background:#fff}
+.gm-login{border:1px solid rgba(150,158,180,.26);transition:border-color .15s}
+.gm-login:hover{border-color:rgba(150,158,180,.5)}
+.gm-viewall{cursor:pointer;transition:color .15s}
+.gm-viewall:hover{color:#fff}
+.shine{font-style:italic;background:linear-gradient(110deg,#8f99b4 20%,#ffffff 40%,#dfe4f5 50%,#ffffff 60%,#8f99b4 80%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gm-shine 4s linear infinite}
+.avatar{position:relative;border-radius:99px;background:#1b1f29;border:1px solid rgba(150,158,180,.18);overflow:hidden;flex:none;display:grid;place-items:center;font-weight:700;color:#9aa2b8}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.88)}
+.reveal{opacity:0;transform:perspective(1200px) translateY(38px) rotateX(7deg);transform-origin:50% 100%;transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@keyframes gm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.float{animation:gm-float 7s ease-in-out infinite}
+.tilt3d{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d;will-change:transform}
+.gm-card,.vcard{transition:transform .25s cubic-bezier(.2,.7,.2,1),border-color .2s,box-shadow .25s}
+@media (prefers-reduced-motion:reduce){.float{animation:none}.reveal{transform:translateY(16px)}.tilt3d,.gm-card,.vcard{transform:none!important}}
+.sec-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#c9a75a;margin-bottom:16px}
+.sec-h2{margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:46px;line-height:1.12;letter-spacing:-.01em}
+.sec-body{font-size:16.5px;color:#a7aec2;line-height:1.65;margin:18px 0 0;max-width:440px}
+.sec-punch{font-family:'DM Serif Display',serif;font-style:italic;font-size:21px;color:#dfe4f5;margin:22px 0 0;line-height:1.4}
+.sec-cta{display:inline-flex;align-items:center;gap:8px;margin-top:26px;font-size:14px;font-weight:600;color:#0a0b0f;background:#f2f3f6;padding:12px 22px;border-radius:11px;transition:background .15s}
+.sec-cta:hover{background:#fff}
+.sec-cta.ghost{background:transparent;color:#c9a75a;border:1px solid rgba(201,167,90,.35)}
+.sec-cta.ghost:hover{background:rgba(201,167,90,.1);color:#e6c877}
+.sec-grid{max-width:1200px;margin:0 auto;padding:120px 24px 0;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.sec-grid.flip .sec-copy{order:2}
+.vcard{background:linear-gradient(180deg,#12141c,#0e1016);border:1px solid rgba(150,158,180,.16);border-radius:18px;padding:20px;box-shadow:0 40px 100px rgba(0,0,0,.5)}
+.vcard-head{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#565d72;padding:2px 4px 14px;border-bottom:1px solid rgba(150,158,180,.1);margin-bottom:8px}
+.vrow{display:flex;align-items:center;gap:12px;padding:11px 6px;border-top:1px solid rgba(150,158,180,.07)}
+.vrow:first-of-type{border-top:none}
+.chip-logo{width:30px;height:30px;border-radius:8px;background:#fff;display:grid;place-items:center;overflow:hidden;flex:none}
+.chip-logo img{width:21px;height:21px;object-fit:contain}
+.chip-logo.blank{background:#1b1f29;color:#8b92a8;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600}
+.tagpill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.tag-up{color:#4fae86;background:rgba(79,174,134,.1)}
+.tag-down{color:#e0566a;background:rgba(224,86,106,.1)}
+@media (max-width:900px){
+  .sec-grid{grid-template-columns:1fr;gap:32px;padding:80px 24px 0}
+  .sec-grid.flip .sec-copy{order:0}
+  .sec-h2{font-size:34px}
+  .hero-h1{font-size:56px !important}
+  .grid-2, .grid-2r, .steps3, .stats3{grid-template-columns:1fr !important}
+  .navlinks{display:none !important}
+  .h2big{font-size:44px !important}
+}
+/* ── premium 3D / futuristic depth (bg + colors unchanged) ── */
+@keyframes gm-rotate{to{transform:rotate(1turn)}}
+.showcase{box-shadow:0 60px 140px rgba(0,0,0,.6), 0 12px 44px rgba(201,167,90,.12) !important; will-change:transform}
+.vcard{box-shadow:0 40px 100px rgba(0,0,0,.5), 0 8px 26px rgba(201,167,90,.08) !important}
+.gm-btn{position:relative}
+.gm-btn::before{content:'';position:absolute;inset:-1.5px;border-radius:14px;z-index:-1;
+  background:conic-gradient(from 0deg,#c9a75a,#4fae86,#8f99b4,#c9a75a);
+  animation:gm-rotate 5s linear infinite;opacity:.75}
+.grid-overlay{position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(150,158,180,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(150,158,180,.05) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:radial-gradient(900px 460px at 50% -4%, #000 28%, transparent 74%);
+  mask-image:radial-gradient(900px 460px at 50% -4%, #000 28%, transparent 74%)}
+@media (prefers-reduced-motion:reduce){.gm-btn::before{animation:none}}
+</style>
+</head>
+<body>
+<div style="min-height:100vh;background:#0a0b0f;color:#eceef4;font-family:'Instrument Sans',sans-serif;font-feature-settings:'tnum'">
+
+  <!-- NAV -->
+  <div style="position:sticky;top:0;z-index:20;background:rgba(10,11,15,.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(150,158,180,.1)">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;padding:18px 24px">
+      <a href="/" style="display:flex;align-items:center;gap:12px;margin-right:auto">
+        <div style="width:38px;height:38px;border-radius:11px;background:#f2f3f6;color:#0a0b0f;display:grid;place-items:center;font-family:'DM Serif Display',serif;font-size:23px">G</div>
+        <span style="font-weight:700;font-size:20px;letter-spacing:-.02em">Giant Money</span>
+      </a>
+      <div class="navlinks" style="display:flex;gap:34px;font-size:14.5px;font-weight:500;color:#b4bac9;margin-right:38px">
+        <a class="navlink" href="#top1">Top 1%</a>
+        <a class="navlink" href="#politicians">Politicians</a>
+        <a class="navlink" href="#insiders">Insiders</a>
+        <a class="navlink" href="#stocks">Stocks</a>
+        <a class="navlink" href="#pricing">Pricing</a>
+      </div>
+      <a class="gm-login" href="/app" style="font-size:14px;font-weight:600;padding:11px 26px;border-radius:10px;cursor:pointer;white-space:nowrap">Join Giant Money</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div style="position:relative;overflow:hidden">
+    <div class="grid-overlay"></div>
+    <div style="position:absolute;inset:0;background:radial-gradient(900px 480px at 50% -8%, rgba(140,150,180,.13), transparent 65%)"></div>
+    <div class="star-layer" data-depth="18" style="position:absolute;top:0;left:0;width:2px;height:2px;border-radius:99px;background:#fff;animation:gm-twinkle 3.2s ease-in-out infinite;box-shadow:120px 90px 0 #fff, 340px 40px 0 rgba(255,255,255,.8), 560px 150px 0 rgba(255,255,255,.9), 760px 60px 0 #fff, 980px 130px 0 rgba(255,255,255,.7), 1180px 50px 0 #fff, 1370px 170px 0 rgba(255,255,255,.8), 1520px 80px 0 #fff, 240px 220px 0 rgba(255,255,255,.6), 880px 260px 0 rgba(255,255,255,.75), 1450px 300px 0 rgba(255,255,255,.6), 60px 380px 0 rgba(255,255,255,.5)"></div>
+    <div class="star-layer" data-depth="34" style="position:absolute;top:0;left:0;width:1.5px;height:1.5px;border-radius:99px;background:rgba(255,255,255,.7);animation:gm-twinkle2 4.6s ease-in-out infinite;box-shadow:200px 160px 0 rgba(200,208,232,.7), 430px 100px 0 rgba(200,208,232,.6), 650px 230px 0 rgba(200,208,232,.7), 840px 170px 0 rgba(200,208,232,.5), 1060px 90px 0 rgba(200,208,232,.7), 1260px 210px 0 rgba(200,208,232,.6), 1490px 140px 0 rgba(200,208,232,.7), 320px 320px 0 rgba(200,208,232,.5), 1120px 330px 0 rgba(200,208,232,.55), 1580px 260px 0 rgba(200,208,232,.5), 500px 400px 0 rgba(200,208,232,.4), 1330px 420px 0 rgba(200,208,232,.45)"></div>
+    <div style="position:absolute;top:110px;left:18%;width:3px;height:3px;border-radius:99px;background:#fff;box-shadow:0 0 8px 2px rgba(255,255,255,.5);animation:gm-twinkle 5.4s ease-in-out infinite"></div>
+    <div style="position:absolute;top:200px;right:14%;width:3px;height:3px;border-radius:99px;background:#fff;box-shadow:0 0 8px 2px rgba(255,255,255,.45);animation:gm-twinkle2 6.2s ease-in-out infinite"></div>
+    <div style="max-width:1200px;margin:0 auto;padding:96px 24px 0;text-align:center;position:relative">
+      <h1 class="hero-h1" style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:110px;line-height:1;letter-spacing:-.01em">Track the <span class="shine" style="position:relative">Billionaires.<span style="position:absolute;top:-6px;right:-30px;font-size:26px;color:#fff;animation:gm-twinkle 2.6s ease-in-out infinite">✦</span><span style="position:absolute;bottom:6px;left:-34px;font-size:17px;color:#dfe4f5;animation:gm-twinkle2 3.4s ease-in-out infinite">✦</span><span style="position:absolute;top:-20px;left:32%;font-size:13px;color:#dfe4f5;animation:gm-twinkle 4.2s ease-in-out infinite">✦</span></span></h1>
+      <p style="max-width:620px;margin:28px auto 0;font-size:19px;line-height:1.6;color:#a7aec2">Institutional-grade intelligence, decoded by AI. Every filing, disclosure and market event — analyzed the moment it's published and delivered as clear, actionable insight.</p>
+      <div style="display:flex;justify-content:center;align-items:center;gap:16px;margin:40px 0 12px">
+        <a href="/app" class="gm-btn" style="font-size:16px;font-weight:600;padding:16px 32px;border-radius:12px;display:flex;align-items:center;gap:10px;cursor:pointer">Start <span>→</span></a>
+      </div>
+      <div style="font-size:13px;color:#6b7288;margin-bottom:64px">Live public data</div>
+    </div>
+
+    <!-- LIVE TICKER MARQUEE (real events from live filings) -->
+    <div style="border-top:1px solid rgba(150,158,180,.1);border-bottom:1px solid rgba(150,158,180,.1);overflow:hidden;padding:14px 0;background:rgba(18,20,28,.5)">
+      <div id="marquee" style="display:flex;gap:56px;width:max-content;animation:gm-marquee 38s linear infinite">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8b92a8">loading live smart-money feed…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT SHOT (live data) -->
+  <div style="max-width:1200px;margin:0 auto;padding:80px 24px 0;position:relative">
+    <div class="tilt3d showcase" style="position:relative;border:1px solid rgba(150,158,180,.16);border-radius:20px;background:linear-gradient(180deg,#12141c,#0e1016);box-shadow:0 60px 140px rgba(0,0,0,.6);overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid rgba(150,158,180,.1)">
+        <span style="width:11px;height:11px;border-radius:99px;background:#2a2e3c"></span><span style="width:11px;height:11px;border-radius:99px;background:#2a2e3c"></span><span style="width:11px;height:11px;border-radius:99px;background:#2a2e3c"></span>
+        <span style="margin:0 auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#565d72;background:rgba(8,9,13,.6);border:1px solid rgba(150,158,180,.12);border-radius:7px;padding:5px 40px">giantmoney · live dashboard</span>
+      </div>
+      <div style="display:grid;grid-template-columns:200px 1fr;max-height:560px" class="grid-2">
+        <div style="background:rgba(8,9,13,.55);border-right:1px solid rgba(150,158,180,.1);padding:20px 12px;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#fff;background:rgba(150,158,180,.12);font-weight:700"><span style="font-size:13px;width:18px">🏠</span>Dashboard</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">👑</span>Top 1% Investors</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">🏛️</span>Politicians</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">📈</span>Stocks</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">📰</span>News</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">⭐</span>Watchlist</div>
+          <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;border-top:1px solid rgba(150,158,180,.1)"><span style="font-size:13px;width:18px">⚙️</span>Settings</div>
+        </div>
+        <div style="padding:22px 26px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+            <div style="font-family:'DM Serif Display',serif;font-size:26px">Dashboard</div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:9px;background:rgba(8,9,13,.55);border:1px solid rgba(150,158,180,.14);border-radius:10px;padding:9px 14px;font-size:12px;color:#6b7288;width:240px">⌕&nbsp; Search stocks, investors…</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#e0566a;white-space:nowrap"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#c9a75a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Alert</div>
+            <div style="width:34px;height:34px;border-radius:10px;background:#1b1f29;border:1px solid rgba(150,158,180,.18);display:grid;place-items:center;font-size:11px;font-weight:700">GM</div>
+          </div>
+          <div id="shotStats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px"></div>
+          <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:10px" class="grid-2">
+            <div style="background:#141721;border:1px solid rgba(150,158,180,.12);border-radius:12px;padding:15px 16px">
+              <div style="font-weight:700;font-size:13px;margin-bottom:8px">Top Market Movers</div>
+              <div id="shotMovers"></div>
+            </div>
+            <div style="background:#141721;border:1px solid rgba(150,158,180,.12);border-radius:12px;padding:15px 16px">
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">Recent moves</div>
+              <div id="shotFeed"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,transparent,#0a0b0f)"></div>
+    </div>
+  </div>
+
+  <!-- STATS BAND (live) -->
+  <div class="stats3" style="max-width:1000px;margin:0 auto;padding:90px 24px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center">
+    <div><div id="statValue" style="font-family:'DM Serif Display',serif;font-size:52px">—</div><div style="font-size:13.5px;color:#8b92a8;margin-top:6px">in tracked 13F portfolios</div></div>
+    <div><div id="statFunds" style="font-family:'DM Serif Display',serif;font-size:52px">—</div><div style="font-size:13.5px;color:#8b92a8;margin-top:6px">elite funds &amp; banks followed</div></div>
+    <div><div id="statStocks" style="font-family:'DM Serif Display',serif;font-size:52px">—</div><div style="font-size:13.5px;color:#8b92a8;margin-top:6px">US stocks covered</div></div>
+  </div>
+
+  <!-- WATCHLIST & ALERTS (same dashboard-shot style, live data) -->
+  <div style="max-width:1200px;margin:0 auto;padding:80px 24px 0;position:relative">
+    <div style="text-align:center;max-width:620px;margin:0 auto 32px">
+      <h2 class="h2big" style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:60px;line-height:1.1">Your <span class="shine">Watchlist</span> &amp; Alerts.</h2>
+      <p style="font-size:16.5px;color:#a7aec2;line-height:1.6;margin:16px 0 0">Save the stocks you care about. We watch them every 60 seconds and tell you the moment smart money moves.</p>
+    </div>
+    <div class="tilt3d showcase" style="position:relative;border:1px solid rgba(150,158,180,.16);border-radius:20px;background:linear-gradient(180deg,#12141c,#0e1016);box-shadow:0 60px 140px rgba(0,0,0,.6);overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid rgba(150,158,180,.1)">
+        <span style="width:11px;height:11px;border-radius:99px;background:#2a2e3c"></span><span style="width:11px;height:11px;border-radius:99px;background:#2a2e3c"></span><span style="width:11px;height:11px;border-radius:99px;background:#2a2e3c"></span>
+        <span style="margin:0 auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#565d72;background:rgba(8,9,13,.6);border:1px solid rgba(150,158,180,.12);border-radius:7px;padding:5px 40px">giantmoney · watchlist &amp; alerts</span>
+      </div>
+      <div style="display:grid;grid-template-columns:200px 1fr;max-height:560px" class="grid-2">
+        <div style="background:rgba(8,9,13,.55);border-right:1px solid rgba(150,158,180,.1);padding:20px 12px;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">🏠</span>Dashboard</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">👑</span>Top 1% Investors</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">🏛️</span>Politicians</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">📈</span>Stocks</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;font-weight:500"><span style="font-size:13px;width:18px">📰</span>News</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#fff;background:rgba(150,158,180,.12);font-weight:700"><span style="font-size:13px;width:18px">⭐</span>Watchlist</div>
+          <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13px;color:#8b92a8;border-top:1px solid rgba(150,158,180,.1)"><span style="font-size:13px;width:18px">⚙️</span>Settings</div>
+        </div>
+        <div style="padding:22px 26px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+            <div style="font-family:'DM Serif Display',serif;font-size:26px">Watchlist</div>
+            <div id="wlCount" style="margin-left:auto;font-size:11.5px;color:#6b7288">⭐&nbsp; live</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:10px" class="grid-2">
+            <div style="background:#141721;border:1px solid rgba(150,158,180,.12);border-radius:12px;padding:15px 16px">
+              <div style="font-weight:700;font-size:13px;margin-bottom:8px">Your Watchlist</div>
+              <div id="wlTable"></div>
+            </div>
+            <div style="background:#141721;border:1px solid rgba(150,158,180,.12);border-radius:12px;padding:15px 16px">
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">What you can do</div>
+              <div id="wlAlerts"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,transparent,#0a0b0f)"></div>
+    </div>
+  </div>
+
+  <!-- FOLLOW THE MONEY — BENTO -->
+  <div style="max-width:1200px;margin:0 auto;padding:110px 24px 0">
+    <div style="text-align:center;max-width:620px;margin:0 auto 56px">
+      <h2 class="h2big" style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:74px;line-height:1.08">Follow the <span class="shine">Money.</span></h2>
+      <p style="font-size:16.5px;color:#a7aec2;line-height:1.6;margin:18px 0 0">Billionaires, hedge funds, politicians and insiders all file public paperwork. We read it the second it drops — and translate it.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:16px" class="grid-2">
+      <div class="gm-card" style="display:flex;flex-direction:column">
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:6px">Top 1% Investors</div>
+        <p style="margin:0 0 20px;font-size:14px;color:#8b92a8;line-height:1.55">Follow America's elite investors. See their full portfolios, every buy and sell, and what it means.</p>
+        <div id="bentoInvestors" style="display:flex;flex-direction:column;flex:1"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="gm-card" style="flex:1">
+          <div style="font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:6px">Politician Trades</div>
+          <p style="margin:0 0 16px;font-size:14px;color:#8b92a8;line-height:1.55">Congressional trades from official PTR filings — with disclosure-lag context.</p>
+          <div id="bentoPolitician"></div>
+        </div>
+        <div class="gm-card" style="flex:1">
+          <div style="font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:6px">Insider Trades</div>
+          <p style="margin:0 0 16px;font-size:14px;color:#8b92a8;line-height:1.55">CEOs and boards trading their own stock. Clusters flagged automatically.</p>
+          <div id="bentoInsiderBar" style="display:flex;height:10px;border-radius:99px;overflow:hidden"><div style="width:50%;background:#4fae86"></div><div style="flex:1;background:#3a4054"></div></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#6b7288;margin-top:8px"><span id="bentoBuys">BUYS —</span><span id="bentoSells">SELLS —</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:16px;margin-top:16px" class="grid-2r">
+      <div class="gm-card">
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:6px">A loop that never sleeps</div>
+        <p style="margin:0 0 20px;font-size:14px;color:#8b92a8;line-height:1.55">A real backend scheduler fetches markets, filings and news around the clock — even when nobody is online.</p>
+        <div id="alertsList" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+      <div class="gm-card">
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:6px">AI that speaks human</div>
+        <p style="margin:0 0 20px;font-size:14px;color:#8b92a8;line-height:1.55">No jargon. Every event answers three questions: what happened, why, and why you should care.</p>
+        <div id="aiBlock" style="background:#141721;border:1px solid rgba(150,158,180,.12);border-radius:12px;padding:18px 20px">
+          <div style="font-size:13px;color:#8b92a8">Waiting for the first analyzed article…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: TOP 1% -->
+  <section id="top1" class="sec-grid reveal">
+    <div class="sec-copy">
+      <div class="sec-kicker">Top 1%</div>
+      <h2 class="sec-h2">See what <span class="shine">billionaires own.</span></h2>
+      <p class="sec-body">Big investors like Warren Buffett must report their stocks to the government. We read those reports and show you what they bought and sold — in simple words.</p>
+      <a class="sec-cta" href="/app#top1">Open Top 1% <span>→</span></a>
+    </div>
+    <div class="vcard">
+      <div class="vcard-head">◆ LIVE 13F LEADERBOARD · SEC EDGAR</div>
+      <div id="secTop1"><div style="color:#6b7288;font-size:12.5px;padding:14px 6px">Loading live filings…</div></div>
+    </div>
+  </section>
+
+  <!-- SECTION: POLITICIANS -->
+  <section id="politicians" class="sec-grid flip reveal">
+    <div class="sec-copy">
+      <div class="sec-kicker">Politicians</div>
+      <h2 class="sec-h2">See how <span class="shine">politicians trade.</span></h2>
+      <p class="sec-body">US Senators and Representatives must report their stock trades by law. We collect those official reports and show them to you, clearly.</p>
+      <a class="sec-cta" href="/app#politicians">Open Politicians <span>→</span></a>
+    </div>
+    <div class="vcard">
+      <div class="vcard-head">◆ LIVE PTR DISCLOSURES · HOUSE &amp; SENATE</div>
+      <div id="secPol"><div style="color:#6b7288;font-size:12.5px;padding:14px 6px">Loading disclosures…</div></div>
+    </div>
+  </section>
+
+  <!-- SECTION: INSIDERS -->
+  <section id="insiders" class="sec-grid reveal">
+    <div class="sec-copy">
+      <div class="sec-kicker">Insiders</div>
+      <h2 class="sec-h2">See when <span class="shine">company bosses buy.</span></h2>
+      <p class="sec-body">When a CEO or director buys or sells their own company's shares, they must tell the government. We show every one of those trades, live.</p>
+      <a class="sec-cta" href="/app#insiders">Open Insiders <span>→</span></a>
+    </div>
+    <div class="vcard">
+      <div class="vcard-head">◆ LIVE FORM 4 FEED · SEC EDGAR</div>
+      <div id="secIns"><div style="color:#6b7288;font-size:12.5px;padding:14px 6px">Loading insider trades…</div></div>
+    </div>
+  </section>
+
+  <!-- SECTION: STOCKS -->
+  <section id="stocks" class="sec-grid flip reveal">
+    <div class="sec-copy">
+      <div class="sec-kicker">Stocks</div>
+      <h2 class="sec-h2">Track <span class="shine">any US stock.</span></h2>
+      <p class="sec-body">Live prices, easy summaries of why a stock is moving, and a watchlist that tells you when the big money makes a move.</p>
+      <a class="sec-cta" href="/app#stocks">Open Stocks <span>→</span></a>
+    </div>
+    <div class="vcard">
+      <div class="vcard-head">◆ TOP MARKET MOVERS · LIVE QUOTES</div>
+      <div id="secStk"><div style="color:#6b7288;font-size:12.5px;padding:14px 6px">Loading quotes…</div></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <div style="max-width:1200px;margin:0 auto;padding:110px 24px 0">
+    <div class="steps3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="border-top:1px solid rgba(150,158,180,.2);padding:26px 6px 0">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6b7288;margin-bottom:14px">01</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:8px">We read the filings</div>
+        <div style="font-size:14px;color:#8b92a8;line-height:1.6">13F, Form 4 and PTR disclosures are parsed the moment they hit public record.</div>
+      </div>
+      <div style="border-top:1px solid rgba(150,158,180,.2);padding:26px 6px 0">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6b7288;margin-bottom:14px">02</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:8px">AI translates them</div>
+        <div style="font-size:14px;color:#8b92a8;line-height:1.6">Every move becomes a plain-English brief: what happened, why, and why it matters.</div>
+      </div>
+      <div style="border-top:1px solid rgba(150,158,180,.2);padding:26px 6px 0">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6b7288;margin-bottom:14px">03</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:8px">You act with context</div>
+        <div style="font-size:14px;color:#8b92a8;line-height:1.6">Follow the investors you trust, watch the stocks they own, see when they move.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div id="pricing" style="max-width:1200px;margin:0 auto;padding:110px 24px 0">
+    <div style="text-align:center;margin-bottom:52px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.4em;color:#6b7288;margin-bottom:18px">PRICING</div>
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:54px">One plan. Everything unlocked.</h2>
+    </div>
+    <div style="max-width:440px;margin:0 auto">
+      <div style="background:linear-gradient(180deg,#161925,#12141c);border:1px solid rgba(150,158,180,.3);border-radius:18px;padding:38px">
+        <div style="font-weight:700;font-size:16px;color:#b4bac9">Giant Money</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin:14px 0 24px"><span style="font-family:'DM Serif Display',serif;font-size:56px">$14</span><span style="font-size:14px;color:#6b7288">/ month</span></div>
+        <div style="display:flex;flex-direction:column;gap:13px;font-size:14.5px;color:#a7aec2">
+          <span>◦&nbsp; Every tracked fund &amp; bank, real-time</span>
+          <span>◦&nbsp; Politician + insider feeds with AI context</span>
+          <span>◦&nbsp; Live market indexes and stock research</span>
+          <span>◦&nbsp; AI-analyzed financial news, 24/7</span>
+        </div>
+        <a href="/app" class="gm-btn" style="display:block;margin-top:30px;border-radius:11px;text-align:center;padding:14px 0;font-size:15px;font-weight:600;cursor:pointer">Start</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <div style="max-width:1200px;margin:0 auto;padding:130px 24px 120px;text-align:center">
+    <h2 class="h2big" style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:74px;line-height:1.05">Follow the money.<br><span style="font-style:italic;color:#8f99b4">Not the noise.</span></h2>
+    <p style="font-size:17px;color:#a7aec2;margin:22px 0 36px">See where America's most influential investors are putting their money.</p>
+    <a href="/app" class="gm-btn" style="display:inline-flex;align-items:center;gap:10px;font-size:16px;font-weight:600;padding:17px 36px;border-radius:12px;cursor:pointer">Start <span>→</span></a>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="border-top:1px solid rgba(150,158,180,.1)">
+    <div style="max-width:1200px;margin:0 auto;padding:56px 24px;display:flex;align-items:flex-start;gap:60px;flex-wrap:wrap">
+      <div style="margin-right:auto">
+        <div style="display:flex;align-items:center;gap:11px"><div style="width:32px;height:32px;border-radius:9px;background:#f2f3f6;color:#0a0b0f;display:grid;place-items:center;font-family:'DM Serif Display',serif;font-size:19px">G</div><span style="font-weight:700;font-size:17px">Giant Money</span></div>
+        <div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:19px;color:#8f99b4;margin-top:14px">See where smart money moves.</div>
+        <div style="font-size:12px;color:#565d72;margin-top:18px;max-width:380px;line-height:1.6">All data is derived from public disclosures (13F, Form 4, PTR). Giant Money is a research tool — not investment advice.</div>
+      </div>
+      <div style="display:flex;gap:60px;font-size:13.5px;color:#8b92a8;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:10px"><b style="color:#eceef4;font-size:12px;letter-spacing:.1em;text-transform:uppercase">Product</b><a class="navlink" href="/app#top1">Top 1% Investors</a><a class="navlink" href="/app#politicians">Politician Trades</a><a class="navlink" href="/app#insiders">Insider Trades</a><a class="navlink" href="/app#stocks">Stock Research</a><a class="navlink" href="/app#news">Market News</a></div>
+        <div style="display:flex;flex-direction:column;gap:10px"><b style="color:#eceef4;font-size:12px;letter-spacing:.1em;text-transform:uppercase">Company</b><a class="navlink" href="/app#pricing">About</a><a class="navlink" href="/app#pricing">Methodology</a><a class="navlink" href="/app#pricing">FAQ</a></div>
+        <div style="display:flex;flex-direction:column;gap:10px"><b style="color:#eceef4;font-size:12px;letter-spacing:.1em;text-transform:uppercase">Legal</b><a class="navlink" href="/app#pricing">Disclosures</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Landing enhancement — fills the design with LIVE platform data (no mock values).
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const usd = v => v == null ? '—' : v >= 1e12 ? '$' + (v/1e12).toFixed(1) + 'T' : v >= 1e9 ? '$' + (v/1e9).toFixed(1) + 'B' : v >= 1e6 ? '$' + (v/1e6).toFixed(1) + 'M' : '$' + Math.round(v).toLocaleString();
+const mono = "font-family:'IBM Plex Mono',monospace";
+
+function avatar(photo, name, size) {
+  const initials = esc(String(name ?? '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase());
+  const img = photo ? `<img src="${esc(photo)}" alt="${esc(name)}" loading="lazy" onerror="this.remove()">` : '';
+  return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${Math.round(size * 0.32)}px"><span>${initials}</span>${img}</div>`;
+}
+
+async function load() {
+  let d;
+  try { d = await (await fetch('/api/landing')).json(); } catch { return; }
+
+  // marquee
+  if (d.marquee?.length) {
+    const items = [...d.marquee, ...d.marquee].map(t =>
+      `<span style="display:flex;align-items:center;gap:10px;${mono};font-size:12.5px;color:#8b92a8;white-space:nowrap"><b style="color:#eceef4;font-weight:600">${esc(t.who)}</b>${esc(t.did)}<b style="color:${t.up ? '#4fae86' : '#e0566a'}">${esc(t.amt)}</b></span>`).join('');
+    document.getElementById('marquee').innerHTML = items;
+  }
+
+  // product shot stats (real indexes)
+  const shotNames = { '^GSPC': 'S&P 500', '^IXIC': 'Nasdaq', '^DJI': 'Dow Jones', '^RUT': 'Russell 2000', '^W5000': 'Total Market' };
+  document.getElementById('shotStats').innerHTML = (d.indexes ?? []).slice(0, 5).map(ix => `
+    <div style="background:#141721;border:1px solid rgba(150,158,180,.12);border-radius:12px;padding:13px 15px">
+      <div style="font-size:10.5px;color:#8b92a8;font-weight:600">${esc(shotNames[ix.symbol] ?? ix.name)}</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:25px;margin-top:8px">${ix.price ? Math.round(ix.price).toLocaleString() : '—'}</div>
+      <div style="font-size:10.5px;margin-top:4px;color:${(ix.change_1d ?? 0) >= 0 ? '#4fae86' : '#e0566a'}">${ix.change_1d != null ? (ix.change_1d >= 0 ? '+' : '') + ix.change_1d.toFixed(2) + '%' : 'awaiting data'}</div>
+    </div>`).join('');
+
+  // movers
+  document.getElementById('shotMovers').innerHTML = (d.movers ?? []).map(m => `
+    <div style="display:grid;grid-template-columns:1.4fr 62px 56px;gap:8px;align-items:center;padding:9px 0;border-top:1px solid rgba(150,158,180,.08)">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:26px;height:26px;border-radius:7px;background:#fff;display:grid;place-items:center;overflow:hidden;flex:none"><img src="https://images.financialmodelingprep.com/symbol/${esc(m.symbol)}.png" alt="" style="width:20px;height:20px;object-fit:contain" onerror="this.parentElement.style.background='#1b1f29'; this.remove()"></div>
+        <div><div style="font-size:12.5px;font-weight:700">${esc(String(m.name).slice(0, 16))}</div><div style="${mono};font-size:9px;color:#6b7288">${esc(m.symbol)}</div></div>
+      </div>
+      <span style="${mono};font-size:11.5px;text-align:right;color:#c3c8d6">$${(m.price ?? 0).toFixed(2)}</span>
+      <span style="${mono};font-size:11.5px;text-align:right;color:${m.change_pct >= 0 ? '#4fae86' : '#e0566a'}">${m.change_pct >= 0 ? '+' : ''}${(m.change_pct ?? 0).toFixed(1)}%</span>
+    </div>`).join('') || '<div style="font-size:12px;color:#6b7288;padding:8px 0">quotes loading…</div>';
+
+  // recent moves feed
+  document.getElementById('shotFeed').innerHTML = (d.recentMoves ?? []).map(m => `
+    <div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(150,158,180,.08)">
+      ${avatar(m.photo, m.manager !== '—' ? m.manager : m.fund, 28)}
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;justify-content:space-between;gap:6px"><span style="font-size:12px;font-weight:700">${esc(m.manager !== '—' ? m.manager : m.fund)}</span><span style="${mono};font-size:8.5px;color:#6b7288">${esc(m.filed_at ?? '')}</span></div>
+        <div style="font-size:10.5px;color:#8b92a8;margin-top:1px">${esc({ new: 'Opened', increased: 'Increased', reduced: 'Reduced', closed: 'Exited' }[m.change_type])} ${esc(String(m.issuer).toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase()).slice(0, 24))}</div>
+        <div style="display:flex;justify-content:space-between;margin-top:3px"><span style="${mono};font-size:9.5px;color:#8b92a8">${m.ticker ? '$' + esc(m.ticker) : ''}</span><span style="${mono};font-size:9.5px;color:${m.dv >= 0 ? '#4fae86' : '#e0566a'}">${m.dv >= 0 ? '+' : '−'}${usd(Math.abs(m.dv)).slice(1)}</span></div>
+      </div>
+    </div>`).join('') || '<div style="font-size:12px;color:#6b7288;padding:8px 0">13F ingestion in progress…</div>';
+
+  // watchlist table (sample of highest Giant Money Score stocks, live quotes)
+  document.getElementById('wlCount').textContent = `⭐  ${(d.watchlist ?? []).length} stocks · live`;
+  document.getElementById('wlTable').innerHTML = (d.watchlist ?? []).map(w => `
+    <div style="display:grid;grid-template-columns:1.4fr 62px 56px;gap:8px;align-items:center;padding:9px 0;border-top:1px solid rgba(150,158,180,.08)">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:26px;height:26px;border-radius:7px;background:#fff;display:grid;place-items:center;overflow:hidden;flex:none"><img src="https://images.financialmodelingprep.com/symbol/${esc(w.symbol)}.png" alt="" style="width:20px;height:20px;object-fit:contain" onerror="this.parentElement.style.background='#1b1f29'; this.remove()"></div>
+        <div><div style="font-size:12.5px;font-weight:700">${esc(String(w.name).slice(0, 16))}</div><div style="${mono};font-size:9px;color:#6b7288">${esc(w.symbol)} · score ${w.score}</div></div>
+      </div>
+      <span style="${mono};font-size:11.5px;text-align:right;color:#c3c8d6">$${(w.price ?? 0).toFixed(2)}</span>
+      <span style="${mono};font-size:11.5px;text-align:right;color:${w.change_pct >= 0 ? '#4fae86' : '#e0566a'}">${w.change_pct >= 0 ? '+' : ''}${(w.change_pct ?? 0).toFixed(1)}%</span>
+    </div>`).join('') || '<div style="font-size:12px;color:#6b7288;padding:8px 0">building your first watchlist…</div>';
+
+  // alerts / capabilities — same font/rhythm as the "Recent moves" feed
+  const CAPS = [
+    { icon: '⭐', title: 'Save any stock, investor or politician', sub: 'One click adds it to your Watchlist — price, insider activity and filings in one place.' },
+    { icon: '🔔', title: 'Instant alerts on smart-money moves', sub: 'We ping you the moment a Top 1% investor, insider or politician trades something you watch.' },
+    { icon: '🧵', title: 'Automatic cluster detection', sub: '3+ executives trading the same stock within 48 hours gets flagged for you automatically.' },
+    { icon: '🤖', title: 'AI context on every alert', sub: 'Each alert comes with a plain-English brief: what happened, and why it matters.' },
+    { icon: '⏱', title: 'Always watching, even offline', sub: 'A real backend loop checks every 60 seconds — your Watchlist updates whether you\'re online or not.' },
+  ];
+  document.getElementById('wlAlerts').innerHTML = CAPS.map(c => `
+    <div style="display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(150,158,180,.08)">
+      <div style="width:28px;height:28px;flex:none;border-radius:99px;background:#1b1f29;border:1px solid rgba(150,158,180,.16);display:grid;place-items:center;font-size:13px">${c.icon}</div>
+      <div style="min-width:0;flex:1">
+        <div style="font-size:12px;font-weight:700">${esc(c.title)}</div>
+        <div style="font-size:10.5px;color:#8b92a8;margin-top:1px;line-height:1.5">${esc(c.sub)}</div>
+      </div>
+    </div>`).join('');
+
+  // big stats
+  document.getElementById('statValue').textContent = usd(d.bigStats?.trackedValue);
+  document.getElementById('statFunds').textContent = d.bigStats?.funds ?? '—';
+  document.getElementById('statStocks').textContent = (d.bigStats?.stocks ?? 0).toLocaleString();
+
+  // bento investors
+  const inv = (d.topInvestors ?? []).map(f => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid rgba(150,158,180,.09)">
+      ${avatar(f.photo, f.manager, 36)}
+      <div><div style="font-size:14px;font-weight:700">${esc(f.manager)}</div><div style="font-size:11.5px;color:#6b7288">${esc(f.name)}</div></div>
+      <span style="margin-left:auto;${mono};font-size:12px;color:#c3c8d6">${usd(f.total_value)}</span>
+      ${f.move ? `<span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;color:${f.move.up ? '#4fae86' : '#e0566a'};background:${f.move.up ? 'rgba(79,174,134,.1)' : 'rgba(224,86,106,.1)'}">${esc(f.move.label)}</span>` : ''}
+    </div>`).join('');
+  document.getElementById('bentoInvestors').innerHTML =
+    (inv || '<div style="font-size:12.5px;color:#6b7288;padding:10px 0">Loading first 13F filings from SEC EDGAR…</div>') +
+    `<a href="/app#top1" class="gm-viewall" style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(150,158,180,.09);display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:600;color:#9aa2b8"><span>View all tracked investors</span><span>→</span></a>`;
+
+  // bento politician
+  const p = d.latestPolitician;
+  document.getElementById('bentoPolitician').innerHTML = p ? `
+    <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:#141721;border:1px solid rgba(150,158,180,.12);border-radius:12px">
+      ${avatar(p.photo, p.name, 32)}
+      <div><div style="font-size:13px;font-weight:700">${esc(p.name)} <span style="font-weight:500;color:#8b92a8">${p.side === 'Buy' ? 'bought' : 'sold'}</span> ${esc(p.ticker)}</div>
+      <div style="${mono};font-size:10px;color:#6b7288;margin-top:2px">${esc(p.amount || '')} · ${esc(p.chamber)} · traded ${esc(p.trade_date)}</div></div>
+    </div>` : '<div style="font-size:12.5px;color:#6b7288">Loading disclosure feed…</div>';
+
+  // bento insider bar
+  const buys = d.insiderTotals?.Buy ?? 0, sells = d.insiderTotals?.Sell ?? 0;
+  if (buys + sells > 0) {
+    document.getElementById('bentoInsiderBar').firstElementChild.style.width = Math.max(4, Math.round((buys / (buys + sells)) * 100)) + '%';
+    document.getElementById('bentoBuys').textContent = 'BUYS ' + usd(buys);
+    document.getElementById('bentoSells').textContent = 'SELLS ' + usd(sells);
+  }
+
+  // alerts card → latest real loop events
+  document.getElementById('alertsList').innerHTML = (d.marquee ?? []).slice(0, 3).map((t, i) => `
+    <div style="background:#141721;border:1px solid rgba(150,158,180,.14);border-radius:12px;padding:13px 16px;display:flex;gap:11px;align-items:flex-start;opacity:${1 - i * 0.2}">
+      <span style="width:8px;height:8px;border-radius:99px;background:${i === 0 ? '#4fae86' : i === 1 ? '#c9a75a' : '#9aa2b8'};margin-top:5px"></span>
+      <div><div style="font-size:13px;font-weight:600">${esc(t.who)} ${esc(t.did)}</div>
+      <div style="font-size:11.5px;color:#8b92a8;margin-top:2px">${esc(t.amt)} · from live public filings</div></div>
+    </div>`).join('');
+
+  // AI block → latest real analyzed article
+  const n = d.latestNews;
+  if (n) {
+    const ago = Math.max(1, Math.round((Date.now() - n.published_at) / 60000));
+    document.getElementById('aiBlock').innerHTML = `
+      <div style="display:flex;gap:8px;${mono};font-size:10px;color:#6b7288;margin-bottom:8px"><span style="color:#9aa2b8">${esc(n.source).toUpperCase()}</span><span>·</span><span>${ago < 60 ? ago + 'M AGO' : Math.round(ago / 60) + 'H AGO'}</span>${n.sentiment ? `<span>·</span><span style="color:${n.sentiment === 'Bullish' ? '#4fae86' : n.sentiment === 'Bearish' ? '#e0566a' : '#9aa2b8'}">${esc(n.sentiment).toUpperCase()}</span>` : ''}</div>
+      <div style="font-size:15px;font-weight:700;line-height:1.4">${esc(n.title)}</div>
+      <div style="font-size:13px;color:#a7aec2;line-height:1.6;margin-top:10px"><b style="color:#eceef4">AI summary —</b> ${esc(n.ai_summary)}</div>
+      ${n.ai_why ? `<div style="font-size:13px;color:#a7aec2;line-height:1.6;margin-top:8px;border-top:1px dashed rgba(150,158,180,.2);padding-top:10px"><b style="color:#9aa2b8">Why it matters —</b> ${esc(n.ai_why)}</div>` : ''}`;
+  }
+
+  renderSections(d);
+}
+
+// ── feature-section mini visuals (live) ─────────────────────────────────────
+function logoChip(t) {
+  return t
+    ? `<div class="chip-logo"><img src="https://images.financialmodelingprep.com/symbol/${esc(t)}.png" alt="" loading="lazy" onerror="this.parentElement.classList.add('blank');this.parentElement.textContent='${esc(t).slice(0,3)}'"></div>`
+    : '<div class="chip-logo blank">—</div>';
+}
+function avatarSm(photo, name) {
+  const ini = esc(String(name ?? '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase());
+  return `<div class="avatar" style="width:30px;height:30px;font-size:10px">${ini}${photo ? `<img src="${esc(photo)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</div>`;
+}
+
+function renderSections(d) {
+  // Top 1% — live 13F leaderboard
+  const t1 = document.getElementById('secTop1');
+  if (t1 && d.top1Rows?.length) {
+    t1.innerHTML = d.top1Rows.map(r => `
+      <div class="vrow">
+        ${avatarSm(r.photo, r.who)}
+        <div style="min-width:0;flex:1">
+          <div style="font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.who)}</div>
+          <div style="font-size:10.5px;color:#8b92a8">${esc(r.action)} ${esc(String(r.issuer).slice(0,20))}</div>
+        </div>
+        ${logoChip(r.ticker)}
+        <span class="tagpill ${r.up ? 'tag-up' : 'tag-down'}">${r.up ? '+' : '−'}${usd(Math.abs(r.dv)).replace('−','')}</span>
+      </div>`).join('');
+  }
+
+  // Politicians — live PTR rows
+  const pol = document.getElementById('secPol');
+  if (pol && d.politicianRows?.length) {
+    pol.innerHTML = `<div style="display:flex;${mono};font-size:9.5px;color:#565d72;letter-spacing:.08em;text-transform:uppercase;padding:0 6px 8px;gap:8px">
+        <span style="flex:1">Politician</span><span style="width:52px">Ticker</span><span style="width:44px">Trade</span><span style="width:74px;text-align:right">Date</span></div>` +
+      d.politicianRows.map(r => `
+      <div class="vrow" style="padding:9px 6px">
+        ${avatarSm(r.photo, r.name)}
+        <div style="flex:1;min-width:0;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.name)}${r.party ? ` <span style="color:${r.party[0]==='R'?'#e08585':r.party[0]==='D'?'#7da7e0':'#8b92a8'};font-size:10px">·${esc(r.party[0])}</span>` : ''}</div>
+        <div style="width:52px">${logoChip(r.ticker)}</div>
+        <span style="width:44px;font-size:11px;font-weight:700;color:${r.side==='Buy'?'#4fae86':'#e0566a'}">${esc(r.side)}</span>
+        <span style="width:74px;text-align:right;${mono};font-size:10px;color:#8b92a8">${esc(r.trade_date)}</span>
+      </div>`).join('');
+  }
+
+  // Insiders — live Form 4, red/green coded
+  const ins = document.getElementById('secIns');
+  if (ins && d.insiderRows?.length) {
+    ins.innerHTML = d.insiderRows.map(r => `
+      <div class="vrow">
+        ${logoChip(r.ticker)}
+        <div style="min-width:0;flex:1">
+          <div style="font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(r.insider_name).slice(0,22))}</div>
+          <div style="font-size:10.5px;color:#8b92a8">${esc(String(r.insider_title || 'Insider').slice(0,20))} · ${esc(r.ticker)}</div>
+        </div>
+        <span class="tagpill ${r.side==='Buy'?'tag-up':'tag-down'}">${esc(r.side)}</span>
+        <span style="${mono};font-size:11px;color:${r.side==='Buy'?'#4fae86':'#e0566a'};width:60px;text-align:right">${usd(r.value)}</span>
+      </div>`).join('');
+  }
+
+  // Stocks — Top Market Movers
+  const stk = document.getElementById('secStk');
+  if (stk && d.movers?.length) {
+    stk.innerHTML = d.movers.map(m => `
+      <div class="vrow">
+        ${logoChip(m.symbol)}
+        <div style="min-width:0;flex:1">
+          <div style="font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(m.name).slice(0,20))}</div>
+          <div style="${mono};font-size:9.5px;color:#6b7288">${esc(m.symbol)}</div>
+        </div>
+        <span style="${mono};font-size:12px;color:#c3c8d6">$${(m.price ?? 0).toFixed(2)}</span>
+        <span style="${mono};font-size:12px;width:56px;text-align:right;color:${m.change_pct>=0?'#4fae86':'#e0566a'}">${m.change_pct>=0?'+':''}${(m.change_pct ?? 0).toFixed(1)}%</span>
+      </div>`).join('');
+  }
+}
+
+// ── scroll-reveal ───────────────────────────────────────────────────────────
+const io = new IntersectionObserver((entries) => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ── subtle 3D + motion (no colors/content changed) ───────────────────────────
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!reduce) {
+  const stars = [...document.querySelectorAll('.star-layer')];
+  const showcases = [...document.querySelectorAll('.showcase')];
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+
+  // gentle page-level parallax: starfield drifts, product mockups tilt in 3D
+  window.addEventListener('mousemove', e => {
+    tx = (e.clientX / window.innerWidth - 0.5);
+    ty = (e.clientY / window.innerHeight - 0.5);
+  });
+  (function raf() {
+    cx += (tx - cx) * 0.06; cy += (ty - cy) * 0.06;
+    for (const s of stars) {
+      const d = Number(s.dataset.depth || 20);
+      s.style.transform = `translate(${(-cx * d).toFixed(1)}px, ${(-cy * d).toFixed(1)}px)`;
+    }
+    for (const s of showcases) {
+      const r = s.getBoundingClientRect();
+      const vis = r.top < window.innerHeight && r.bottom > 0;
+      if (vis) s.style.transform = `perspective(1600px) rotateY(${(cx * 5).toFixed(2)}deg) rotateX(${(-cy * 4).toFixed(2)}deg)`;
+    }
+    requestAnimationFrame(raf);
+  })();
+
+  // per-card hover tilt for bento + section cards
+  document.querySelectorAll('.gm-card, .vcard').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `perspective(900px) rotateY(${(px * 6).toFixed(2)}deg) rotateX(${(-py * 6).toFixed(2)}deg) translateY(-4px)`;
+      card.style.boxShadow = '0 30px 70px rgba(0,0,0,.45)';
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; card.style.boxShadow = ''; });
+  });
+}
+
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>

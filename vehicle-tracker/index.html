@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FleetTrack — Live Vehicle Tracking</title>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #121a30;
+    --panel-2: #182444;
+    --line: #223056;
+    --text: #e8edf7;
+    --muted: #8a97b4;
+    --accent: #38e1b0;
+    --accent-2: #4c8dff;
+    --danger: #ff5c72;
+    --warn: #ffc861;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+  #app { display: grid; grid-template-columns: 340px 1fr; height: 100vh; }
+
+  /* Sidebar */
+  #sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .brand {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .logo {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid; place-items: center; font-size: 20px;
+    box-shadow: 0 0 20px rgba(76,141,255,.4);
+  }
+  .brand h1 { font-size: 17px; margin: 0; letter-spacing: .3px; }
+  .brand p { margin: 2px 0 0; font-size: 11px; color: var(--muted); }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); }
+  .stat { background: var(--panel); padding: 14px 16px; }
+  .stat .n { font-size: 22px; font-weight: 700; }
+  .stat .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
+  .stat .n.green { color: var(--accent); }
+  .stat .n.blue { color: var(--accent-2); }
+
+  .list-head {
+    padding: 12px 18px 8px; font-size: 11px; letter-spacing: .8px;
+    text-transform: uppercase; color: var(--muted);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  #list { flex: 1; overflow-y: auto; padding: 0 10px 14px; }
+  .card {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 8px 4px;
+    cursor: pointer;
+    transition: border-color .15s, transform .1s;
+  }
+  .card:hover { border-color: var(--accent-2); }
+  .card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .card .top { display: flex; align-items: center; gap: 10px; }
+  .veh-ico { font-size: 18px; }
+  .card .name { font-weight: 600; font-size: 14px; }
+  .card .id { font-size: 11px; color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+  .card .meta { display: flex; gap: 14px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+  .card .meta b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .s-moving { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .s-idle { background: var(--warn); }
+  .s-stopped { background: var(--danger); }
+  .badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: .5px; }
+  .b-moving { color: var(--accent); background: rgba(56,225,176,.12); }
+  .b-idle { color: var(--warn); background: rgba(255,200,97,.12); }
+  .b-stopped { color: var(--danger); background: rgba(255,92,114,.12); }
+
+  /* Map */
+  #map { height: 100vh; z-index: 1; background: #0b1020; }
+  .leaflet-container { background: #0e1428; }
+
+  .veh-marker {
+    display: grid; place-items: center;
+    width: 34px; height: 34px; border-radius: 50%;
+    font-size: 17px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    transition: transform .2s linear;
+  }
+  .trail-legend {
+    position: absolute; z-index: 500; right: 14px; top: 14px;
+    background: rgba(18,26,48,.9); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 14px; backdrop-filter: blur(8px);
+    font-size: 12px; min-width: 150px;
+  }
+  .trail-legend .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; color: var(--muted); }
+  .trail-legend h4 { margin: 0 0 8px; font-size: 11px; letter-spacing: .8px; text-transform: uppercase; color: var(--text); }
+
+  .live-pill {
+    position: absolute; z-index: 500; left: 14px; top: 14px;
+    background: rgba(18,26,48,.9); border: 1px solid var(--line);
+    border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px; backdrop-filter: blur(8px);
+  }
+  .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--danger); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(255,92,114,.6)} 70%{box-shadow:0 0 0 8px rgba(255,92,114,0)} 100%{box-shadow:0 0 0 0 rgba(255,92,114,0)} }
+
+  #list::-webkit-scrollbar { width: 8px; }
+  #list::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+
+  .popup-veh { font-size: 13px; min-width: 160px; }
+  .popup-veh b { font-size: 14px; }
+  .popup-veh .grid { display: grid; grid-template-columns: auto auto; gap: 3px 14px; margin-top: 8px; }
+  .popup-veh .grid span:nth-child(odd){ color:#555; }
+
+  @media (max-width: 720px) {
+    #app { grid-template-columns: 1fr; grid-template-rows: 45vh 55vh; }
+    #sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+    #map { height: 55vh; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">🛰️</div>
+      <div>
+        <h1>FleetTrack</h1>
+        <p>Live GPS Vehicle Tracking</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="s-total">0</div><div class="l">Vehicles</div></div>
+      <div class="stat"><div class="n green" id="s-moving">0</div><div class="l">Moving</div></div>
+      <div class="stat"><div class="n blue" id="s-speed">0</div><div class="l">Avg km/h</div></div>
+      <div class="stat"><div class="n" id="s-dist">0</div><div class="l">Fleet km today</div></div>
+    </div>
+    <div class="list-head"><span>Fleet</span><span id="clock">--:--:--</span></div>
+    <div id="list"></div>
+  </aside>
+  <div style="position:relative">
+    <div class="live-pill"><span class="pulse"></span> LIVE · updating every 1s</div>
+    <div class="trail-legend">
+      <h4>Status</h4>
+      <div class="row"><span class="dot s-moving"></span> Moving</div>
+      <div class="row"><span class="dot s-idle"></span> Idle</div>
+      <div class="row"><span class="dot s-stopped"></span> Stopped</div>
+    </div>
+    <div id="map"></div>
+  </div>
+</div>
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+<script>
+// ---------- Map ----------
+const map = L.map('map', { zoomControl: true, attributionControl: true }).setView([40.7308, -73.9975], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO',
+  subdomains: 'abcd', maxZoom: 20
+}).addTo(map);
+
+// ---------- Fleet definition ----------
+// Each vehicle follows a looping route of waypoints around Manhattan.
+const FLEET = [
+  { id:'CAR-04', name:'Sedan · Dispatch 4', type:'car',   ico:'🚗', color:'#4c8dff',
+    route:[[40.7128,-74.0060],[40.7188,-74.0000],[40.7260,-73.9960],[40.7330,-73.9900],[40.7280,-73.9840],[40.7180,-73.9890],[40.7128,-74.0060]] },
+  { id:'BIKE-11', name:'E-Bike Courier 11', type:'bike',  ico:'🚲', color:'#38e1b0',
+    route:[[40.7420,-74.0020],[40.7460,-73.9950],[40.7500,-73.9880],[40.7440,-73.9840],[40.7380,-73.9910],[40.7420,-74.0020]] },
+  { id:'TRK-07', name:'Delivery Truck 7',   type:'truck', ico:'🚚', color:'#ffc861',
+    route:[[40.7050,-74.0130],[40.7120,-74.0090],[40.7200,-74.0050],[40.7150,-73.9970],[40.7060,-74.0010],[40.7050,-74.0130]] },
+  { id:'BUS-22', name:'Shuttle Bus 22',     type:'bus',   ico:'🚌', color:'#c98bff',
+    route:[[40.7580,-73.9855],[40.7620,-73.9790],[40.7560,-73.9720],[40.7490,-73.9760],[40.7520,-73.9850],[40.7580,-73.9855]] },
+  { id:'SCT-03', name:'Scooter 3',          type:'scooter',ico:'🛵', color:'#ff8a5c',
+    route:[[40.7220,-73.9980],[40.7250,-73.9910],[40.7300,-73.9950],[40.7280,-74.0030],[40.7220,-73.9980]] },
+  { id:'CAR-09', name:'SUV · Dispatch 9',   type:'car',   ico:'🚙', color:'#5ce1ff',
+    route:[[40.7480,-73.9680],[40.7420,-73.9620],[40.7360,-73.9700],[40.7410,-73.9780],[40.7480,-73.9680]] },
+];
+
+const R = 6371; // km
+function haversine(a, b){
+  const dLat=(b[0]-a[0])*Math.PI/180, dLon=(b[1]-a[1])*Math.PI/180;
+  const la1=a[0]*Math.PI/180, la2=b[0]*Math.PI/180;
+  const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function bearing(a,b){
+  const y=Math.sin((b[1]-a[1])*Math.PI/180)*Math.cos(b[0]*Math.PI/180);
+  const x=Math.cos(a[0]*Math.PI/180)*Math.sin(b[0]*Math.PI/180)-Math.sin(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.cos((b[1]-a[1])*Math.PI/180);
+  return (Math.atan2(y,x)*180/Math.PI+360)%360;
+}
+function lerp(a,b,t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t]; }
+
+// Base cruising speed (km/h) per type -> converted to progress along route.
+const BASE_SPEED = { car:42, bike:19, truck:34, bus:26, scooter:24 };
+
+// ---------- Init vehicle state ----------
+let selected = null;
+const vehicles = FLEET.map(v => {
+  const segLens = [];
+  let total = 0;
+  for (let i=0;i<v.route.length-1;i++){ const d=haversine(v.route[i],v.route[i+1]); segLens.push(d); total+=d; }
+  return {
+    ...v,
+    segLens, total,
+    seg: 0, segT: Math.random(),        // start at a random point on the route
+    pos: v.route[0].slice(),
+    speed: BASE_SPEED[v.type],
+    heading: 0,
+    status: 'moving',
+    distToday: Math.random()*30,        // km already driven today
+    idleTicks: 0,
+    marker: null, trail: null, trailPts: []
+  };
+});
+
+// ---------- Markers ----------
+vehicles.forEach(v => {
+  const icon = L.divIcon({
+    className: '',
+    html: `<div class="veh-marker" style="background:${v.color}">${v.ico}</div>`,
+    iconSize: [34,34], iconAnchor: [17,17]
+  });
+  v.marker = L.marker(v.pos, { icon }).addTo(map);
+  v.marker.on('click', ()=> selectVehicle(v.id, false));
+  v.trail = L.polyline([], { color: v.color, weight: 3, opacity: .55 }).addTo(map);
+});
+
+// ---------- Simulation loop ----------
+const TICK = 1000; // ms
+function step(){
+  vehicles.forEach(v => {
+    // Occasionally change status (traffic, stops)
+    if (Math.random() < 0.015 && v.status==='moving'){ v.status='idle'; v.idleTicks = 3 + Math.floor(Math.random()*6); }
+    if (v.status==='idle'){
+      v.idleTicks--;
+      v.speed = Math.max(0, v.speed - 6);
+      if (v.idleTicks<=0){ v.status='moving'; }
+    } else {
+      // accelerate back toward cruising speed with a little noise
+      const cruise = BASE_SPEED[v.type];
+      v.speed += (cruise - v.speed)*0.3 + (Math.random()-0.5)*6;
+      v.speed = Math.max(4, Math.min(cruise*1.25, v.speed));
+    }
+
+    if (v.status !== 'idle'){
+      // distance to travel this tick (km) = speed(km/h) * (TICK/3600s)
+      let travel = v.speed * (TICK/1000) / 3600;
+      v.distToday += travel;
+      // advance along route
+      while (travel > 0){
+        const segLen = v.segLens[v.seg];
+        const remain = segLen * (1 - v.segT);
+        if (travel < remain){
+          v.segT += travel/segLen; travel = 0;
+        } else {
+          travel -= remain; v.seg = (v.seg+1) % v.segLens.length; v.segT = 0;
+        }
+      }
+      const a = v.route[v.seg], b = v.route[v.seg+1];
+      v.pos = lerp(a,b,v.segT);
+      v.heading = bearing(a,b);
+    }
+
+    // Update marker + trail
+    v.marker.setLatLng(v.pos);
+    v.trailPts.push(v.pos.slice());
+    if (v.trailPts.length > 40) v.trailPts.shift();
+    v.trail.setLatLngs(v.trailPts);
+    if (selected === v.id) map.panTo(v.pos, { animate:true, duration:.8 });
+  });
+  render();
+}
+
+// ---------- UI ----------
+const listEl = document.getElementById('list');
+function statusClass(s){ return s==='moving'?'s-moving':s==='idle'?'s-idle':'s-stopped'; }
+function badgeClass(s){ return s==='moving'?'b-moving':s==='idle'?'b-idle':'b-stopped'; }
+
+function render(){
+  // stats
+  document.getElementById('s-total').textContent = vehicles.length;
+  const moving = vehicles.filter(v=>v.status==='moving').length;
+  document.getElementById('s-moving').textContent = moving;
+  const avg = Math.round(vehicles.reduce((s,v)=>s+(v.status==='moving'?v.speed:0),0)/Math.max(1,moving));
+  document.getElementById('s-speed').textContent = isFinite(avg)?avg:0;
+  document.getElementById('s-dist').textContent = Math.round(vehicles.reduce((s,v)=>s+v.distToday,0));
+
+  // list
+  listEl.innerHTML = vehicles.map(v=>`
+    <div class="card ${selected===v.id?'active':''}" data-id="${v.id}">
+      <div class="top">
+        <span class="veh-ico">${v.ico}</span>
+        <span class="name">${v.name}</span>
+        <span class="id">${v.id}</span>
+      </div>
+      <div class="meta">
+        <span><span class="dot ${statusClass(v.status)}"></span> <span class="badge ${badgeClass(v.status)}">${v.status}</span></span>
+        <span>Speed <b>${Math.round(v.speed)}</b> km/h</span>
+        <span>Today <b>${v.distToday.toFixed(1)}</b> km</span>
+      </div>
+    </div>`).join('');
+  [...listEl.querySelectorAll('.card')].forEach(c=>{
+    c.onclick = ()=> selectVehicle(c.dataset.id, true);
+  });
+
+  // popup of selected
+  const sv = vehicles.find(v=>v.id===selected);
+  if (sv && sv.marker.isPopupOpen()){
+    sv.marker.setPopupContent(popupHtml(sv));
+  }
+}
+
+function popupHtml(v){
+  const compass = ['N','NE','E','SE','S','SW','W','NW'][Math.round(v.heading/45)%8];
+  return `<div class="popup-veh">
+    <b>${v.ico} ${v.name}</b><br><span style="color:#888">${v.id}</span>
+    <div class="grid">
+      <span>Status</span><span>${v.status}</span>
+      <span>Speed</span><span>${Math.round(v.speed)} km/h</span>
+      <span>Heading</span><span>${Math.round(v.heading)}° ${compass}</span>
+      <span>Lat / Lng</span><span>${v.pos[0].toFixed(4)}, ${v.pos[1].toFixed(4)}</span>
+      <span>Distance today</span><span>${v.distToday.toFixed(1)} km</span>
+    </div>
+  </div>`;
+}
+
+function selectVehicle(id, fly){
+  selected = id;
+  const v = vehicles.find(x=>x.id===id);
+  if (!v) return;
+  if (fly) map.flyTo(v.pos, 15, { duration: .9 });
+  v.marker.bindPopup(popupHtml(v)).openPopup();
+  render();
+}
+
+// clock
+setInterval(()=>{
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+}, 1000);
+
+// go
+render();
+setInterval(step, TICK);
+</script>
+</body>
+</html>

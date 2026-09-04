@@ -1,0 +1,63 @@
+# Firebase App Hosting — the simple Firebase route for this app.
+#
+# Firebase Hosting on its own only serves static files. App Hosting is the
+# Firebase product for a real server: it connects to the GitHub repo, builds it,
+# and runs it on Cloud Run underneath, with the Firebase domain in front.
+#
+# Deploy is: firebase init apphosting  →  pick this repo  →  done.
+# Every later `git push` to main redeploys automatically.
+
+runConfig:
+  # A container that is allowed to scale to zero would kill the point of this
+  # app: src/scheduler.js runs 15 cron jobs that ingest filings around the clock.
+  # minInstances: 1 keeps exactly one instance awake to run them.
+  minInstances: 1
+  maxInstances: 1        # SQLite is a single file — never run two writers against it
+  concurrency: 80
+  cpu: 1
+  # 1 GiB, not 512 MiB, on purpose. On Cloud Run /tmp is an in-memory tmpfs, so
+  # the SQLite file counts against the container's RAM — the database is already
+  # ~55 MB and grows with price history. 512 MiB would leave too little headroom
+  # for Node itself and the container would be OOM-killed mid-ingest.
+  memoryMiB: 1024
+
+env:
+  # SEC EDGAR throttles or blocks callers that do not declare a real contact.
+  # Change this to your own address before going public.
+  - variable: SEC_USER_AGENT
+    value: GIANT-MONEY research you@example.com
+    availability:
+      - RUNTIME
+
+  - variable: NODE_ENV
+    value: production
+    availability:
+      - RUNTIME
+
+  # Where SQLite and the Yahoo cookie jar are written. See the note below about
+  # what does and does not survive a restart.
+  - variable: DATA_DIR
+    value: /tmp/gm-data
+    availability:
+      - RUNTIME
+
+  # Optional: Claude-written news summaries. Store the key as a secret first:
+  #   firebase apphosting:secrets:set ANTHROPIC_API_KEY
+  # then uncomment these three lines.
+  # - variable: ANTHROPIC_API_KEY
+  #   secret: ANTHROPIC_API_KEY
+  #   availability:
+  #     - RUNTIME
+
+# ── The one thing to understand about storage ────────────────────────────────
+# App Hosting runs on Cloud Run, whose filesystem is ephemeral. On a restart:
+#
+#   comes back on its own   — every market figure. seedFunds() and bootstrap()
+#                             re-ingest filings, prices and news from the public
+#                             sources within a few minutes.
+#   does NOT come back      — anything a person typed: user accounts, watchlists,
+#                             portfolios, alert rules.
+#
+# That is fine while nobody has signed up. Once real users exist, either mount a
+# Filestore volume (see DEPLOY.md) or move the users/sessions/user_data tables to
+# Firestore, which is the natural fit inside Firebase.

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giant Money — Track the Billionaires &amp; Politicians</title>
+<meta name="description" content="Live intelligence on what billionaires, hedge funds and US politicians are actually buying. Real filings, decoded.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F; --panel:rgba(255,255,255,.045); --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.18);
+  --text:#EDF0F8; --muted:#8A93A8; --muted-2:#5C657C;
+  --gold:#EAB308; --green:#22C55E; --green-deep:#16A34A; --red:#EF4444; --cyan:#22D3EE; --violet:#A78BFA;
+  --sans:'Instrument Sans',-apple-system,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --serif:'DM Serif Display',Georgia,serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(34,197,94,.25)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+.mono{font-family:var(--mono);font-feature-settings:'tnum'}
+
+/* ═══════════ ambient backdrop ═══════════ */
+/* fixed layer — never transformed on scroll (that exposes gaps) */
+.cosmos{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:absolute;width:70vw;height:70vw;border-radius:50%;opacity:.5;will-change:transform}
+.a1{background:radial-gradient(circle,rgba(34,197,94,.30) 0%,rgba(34,197,94,.10) 32%,transparent 62%);top:-28vw;left:-16vw;animation:drift1 26s ease-in-out infinite}
+.a2{background:radial-gradient(circle,rgba(234,179,8,.20) 0%,rgba(234,179,8,.07) 32%,transparent 62%);top:-20vw;right:-20vw;animation:drift2 32s ease-in-out infinite}
+.a3{background:radial-gradient(circle,rgba(34,211,238,.13) 0%,rgba(34,211,238,.05) 32%,transparent 62%);bottom:-32vw;left:20vw;animation:drift1 38s ease-in-out infinite reverse}
+@keyframes drift1{50%{transform:translate(6vw,4vw) scale(1.12)}}
+@keyframes drift2{50%{transform:translate(-5vw,6vw) scale(.92)}}
+.gridfloor{position:absolute;left:-20%;right:-20%;bottom:-6%;height:46vh;transform:perspective(700px) rotateX(64deg);transform-origin:bottom;
+  background:
+    repeating-linear-gradient(90deg,rgba(34,197,94,.13) 0 1px,transparent 1px 72px),
+    repeating-linear-gradient(0deg,rgba(34,197,94,.13) 0 1px,transparent 1px 72px);
+  -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,.8),transparent 85%);mask-image:linear-gradient(to top,rgba(0,0,0,.8),transparent 85%);
+  will-change:opacity}
+.stars i{position:absolute;width:2px;height:2px;border-radius:99px;background:rgba(237,240,248,.7);animation:tw 4s ease-in-out infinite}
+@keyframes tw{50%{opacity:.15}}
+.scanline{position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(34,211,238,.03) 50%,transparent 52%);background-size:100% 9px;opacity:.5}
+.grain{position:fixed;inset:-50%;z-index:1;pointer-events:none;opacity:.028;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 8s steps(6) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-2%)}80%{transform:translate(3%,3%)}}
+
+/* ═══════════ progress + nav ═══════════ */
+.prog{position:fixed;top:0;left:0;height:2px;z-index:60;width:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--gold),var(--green),var(--cyan));box-shadow:0 0 14px rgba(34,197,94,.6)}
+nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:50;width:min(1180px,calc(100vw - 32px));
+  display:flex;align-items:center;gap:20px;padding:12px 18px;border-radius:16px;
+  background:rgba(10,14,26,.55);backdrop-filter:blur(20px);border:1px solid var(--line);box-shadow:0 12px 40px rgba(0,0,0,.4);
+  transition:background .3s,border-color .3s,box-shadow .3s}
+nav.solid{background:rgba(8,11,20,.82);border-color:var(--line-2);box-shadow:0 16px 50px rgba(0,0,0,.6)}
+.logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:16.5px;letter-spacing:-.01em}
+.logo .m{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#fff,#cfd6e4);color:#05070F;display:grid;place-items:center;font-family:var(--serif);font-size:19px;box-shadow:0 0 18px rgba(255,255,255,.25)}
+nav .links{margin-left:auto;display:flex;gap:2px;align-items:center}
+/* :not(.btn) matters — without it this beats .btn-neon on specificity and
+   repaints the CTA grey-on-green and squashes its padding. */
+nav .links a:not(.btn){position:relative;font-size:13.5px;font-weight:600;color:var(--muted);padding:8px 13px;border-radius:10px;transition:color .18s}
+nav .links a:not(.btn)::after{content:'';position:absolute;left:13px;right:13px;bottom:4px;height:1px;background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+nav .links a:not(.btn):hover{color:#fff}
+nav .links a:not(.btn):hover::after{transform:scaleX(1)}
+@media(max-width:860px){nav .links a:not(.btn){display:none}}
+.btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;border-radius:13px;cursor:pointer;transition:transform .16s,box-shadow .2s,border-color .2s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-neon{font-size:14px;color:#03170b;background:linear-gradient(135deg,#34e07a,var(--green-deep));padding:11px 20px;border:none;
+  box-shadow:0 0 0 1px rgba(34,197,94,.5),0 8px 30px rgba(34,197,94,.35);animation:pulse 3.2s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 1px rgba(34,197,94,.5),0 8px 44px rgba(34,197,94,.55)}}
+.btn-neon:hover{transform:translateY(-2px)}
+.btn-ghost{font-size:14px;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line);padding:11px 20px}
+.btn-ghost:hover{border-color:rgba(34,211,238,.45);box-shadow:0 0 24px rgba(34,211,238,.12)}
+
+/* ═══════════ section shell ═══════════ */
+.sect{position:relative;z-index:2;width:min(1180px,94vw);margin:clamp(88px,12vw,140px) auto 0;scroll-margin-top:104px}
+.eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+.eyebrow::before{content:'';width:26px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.sect h2{font-weight:800;letter-spacing:-.035em;font-size:clamp(1.9rem,4.4vw,3.1rem);line-height:1.06;max-width:800px}
+.dek{color:var(--muted);font-size:clamp(1rem,1.5vw,1.13rem);line-height:1.7;max-width:660px;margin-top:20px}
+.dek b{color:var(--text)}
+.hl{background:linear-gradient(100deg,#fff 10%,var(--gold) 40%,#7CFCB1 60%,var(--cyan) 85%);background-size:250% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:holo 8s ease-in-out infinite}
+@keyframes holo{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* ═══════════ hero ═══════════ */
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:130px 20px 70px}
+.hud-chip{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:8px 16px;background:rgba(255,255,255,.03);backdrop-filter:blur(10px)}
+.hud-chip .dot{width:7px;height:7px;border-radius:99px;background:var(--green);box-shadow:0 0 12px var(--green);animation:tw 2s ease-in-out infinite}
+h1{font-family:var(--sans);font-weight:800;letter-spacing:-.04em;line-height:1.01;font-size:clamp(2.6rem,7.4vw,5.8rem);margin:30px 0 0;max-width:1020px}
+h1 .w{display:inline-block;opacity:0;transform:translateY(28px) rotate(2deg);filter:blur(6px);animation:wordIn .9s var(--ease) forwards}
+@keyframes wordIn{to{opacity:1;transform:none;filter:none}}
+h1 .holo{background:linear-gradient(100deg,#fff 10%,var(--gold) 35%,#7CFCB1 55%,var(--cyan) 75%,#fff 90%);background-size:280% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:holo 7s ease-in-out infinite}
+h1 .holo.w{animation:wordIn .9s var(--ease) forwards,holo 7s ease-in-out infinite}
+.hero .sub{color:var(--muted);font-size:clamp(1rem,1.55vw,1.2rem);max-width:660px;margin:28px auto 0;line-height:1.7}
+.hero .sub b{color:var(--text)}
+.hero .ctas{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap;justify-content:center}
+.hero .note{margin-top:16px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--muted-2)}
+.scroll-cue{margin-top:50px;display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--muted-2)}
+.scroll-cue .bar{width:1px;height:44px;background:linear-gradient(180deg,var(--cyan),transparent);animation:cue 2.4s ease-in-out infinite}
+@keyframes cue{0%,100%{opacity:.25;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+.hud-stage{position:relative;z-index:2;width:min(1180px,94vw);margin:26px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;perspective:1200px}
+@media(max-width:900px){.hud-stage{grid-template-columns:1fr;max-width:420px}}
+.hud{position:relative;border-radius:18px;padding:20px;text-align:left;background:rgba(10,14,26,.55);backdrop-filter:blur(22px);
+  border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.45);transition:transform .25s ease-out,border-color .25s,box-shadow .25s;will-change:transform;overflow:hidden}
+.hud:hover{border-color:rgba(34,211,238,.35);box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 40px rgba(34,211,238,.10)}
+.hud::before,.hud::after{content:'';position:absolute;width:16px;height:16px;border:1px solid rgba(34,211,238,.55)}
+.hud::before{top:8px;left:8px;border-right:0;border-bottom:0}
+.hud::after{bottom:8px;right:8px;border-left:0;border-top:0}
+.hud .sweep{position:absolute;top:0;bottom:0;width:46%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.05),transparent);transform:skewX(-18deg);animation:sweep 6s ease-in-out infinite}
+@keyframes sweep{12%,100%{left:130%}}
+.hud .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--cyan);opacity:.85;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.hud .k::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(34,211,238,.35),transparent)}
+.hud .v{font-family:var(--mono);font-size:26px;letter-spacing:-.01em}
+.hud .v small{font-size:13px}
+.hud .up{color:var(--green)}.hud .dn{color:var(--red)}
+.hud .who{display:flex;align-items:center;gap:10px;margin-top:2px}
+.hud .who img{width:38px;height:38px;border-radius:99px;object-fit:cover;border:1px solid rgba(255,255,255,.2)}
+.hud .who .nm{font-weight:700;font-size:14.5px;line-height:1.25}
+.hud .who .nm i{display:block;font-style:normal;font-family:var(--mono);font-size:9.5px;color:var(--muted-2);letter-spacing:.08em;margin-top:3px}
+.hud .tag{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:10.5px;padding:4px 10px;border-radius:7px;border:1px solid rgba(34,197,94,.4);color:var(--green);background:rgba(34,197,94,.07)}
+.hud .tag.gold{border-color:rgba(234,179,8,.4);color:var(--gold);background:rgba(234,179,8,.06)}
+.f1{animation:float 7s ease-in-out infinite}
+.f2{animation:float 8s ease-in-out 1.2s infinite}
+.f3{animation:float 9s ease-in-out 2.1s infinite}
+@keyframes float{50%{transform:translateY(-9px)}}
+
+/* ═══════════ marquee + stats ═══════════ */
+.marq{position:relative;z-index:2;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:64px;
+  background:rgba(5,7,15,.6);backdrop-filter:blur(10px);overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marq-in{display:inline-block;white-space:nowrap;padding:15px 0;font-family:var(--mono);font-size:13px;color:var(--muted);animation:mq 42s linear infinite;will-change:transform}
+@keyframes mq{to{transform:translateX(-50%)}}
+.marq .up{color:var(--green)}.marq .dn{color:var(--red)}.marq .sep{color:rgba(34,211,238,.6);margin:0 16px}
+.statband{position:relative;z-index:2;width:min(1180px,94vw);margin:clamp(56px,7vw,84px) auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+@media(max-width:820px){.statband{grid-template-columns:repeat(2,1fr)}}
+.stat{background:rgba(10,14,26,.66);backdrop-filter:blur(18px);padding:28px 20px;text-align:center;transition:background .3s}
+.stat:hover{background:rgba(16,22,38,.85)}
+
+/* "what just happened" — real filings, so the page reads differently each visit */
+.happened{margin-top:clamp(40px,6vw,64px)}
+.hp-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.hp-dot{width:8px;height:8px;border-radius:99px;background:var(--green);box-shadow:0 0 12px var(--green);animation:tw 2s ease-in-out infinite;flex:none}
+.hp-k{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--green)}
+.hp-when{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--muted-2)}
+.hp-list{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.hp-row{display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(10,14,26,.6);font-size:13.5px;transition:background .18s}
+.hp-row:hover{background:rgba(16,22,38,.85)}
+.hp-src{flex:none;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;padding:3px 8px;border-radius:5px;
+  color:var(--cyan);background:rgba(34,211,238,.09);border:1px solid rgba(34,211,238,.25)}
+.hp-tk{flex:none;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);min-width:52px}
+.hp-txt{color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hp-amt{margin-left:auto;flex:none;font-family:var(--mono);font-size:12px}
+.hp-amt.up{color:var(--green)}.hp-amt.dn{color:var(--red)}
+@media(max-width:620px){.hp-txt{white-space:normal}.hp-row{flex-wrap:wrap;gap:8px}}
+.stat .n{font-family:var(--mono);font-size:clamp(1.5rem,3vw,2.15rem);font-weight:500;letter-spacing:-.02em;
+  background:linear-gradient(120deg,#fff,var(--gold),#7CFCB1);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:holo 8s ease-in-out infinite}
+.stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted-2);text-transform:uppercase;margin-top:10px}
+
+/* ═══════════ glow card base ═══════════ */
+.glowcard{position:relative;border-radius:20px;background:var(--panel);backdrop-filter:blur(20px);border:1px solid var(--line);overflow:hidden;
+  transition:transform .3s var(--ease),border-color .3s,box-shadow .3s}
+.glowcard::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;
+  background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(234,179,8,.13),transparent 65%)}
+.glowcard:hover{transform:translateY(-5px);border-color:rgba(234,179,8,.35);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.glowcard:hover::before{opacity:1}
+
+/* ═══════════ split (copy + live panel) ═══════════ */
+.split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(28px,4.5vw,58px);align-items:start;margin-top:44px}
+@media(max-width:960px){.split{grid-template-columns:1fr}}
+.sc-list{margin-top:24px;display:flex;flex-direction:column;gap:15px}
+.sc-item{display:flex;gap:13px;align-items:flex-start}
+.sc-item .ck{width:22px;height:22px;border-radius:7px;flex:none;display:grid;place-items:center;font-size:11px;
+  background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:var(--green);margin-top:2px}
+.sc-item div{font-size:14.2px;color:var(--muted);line-height:1.62}
+.sc-item b{color:var(--text);font-weight:700}
+.visual{position:relative;border-radius:20px;padding:22px;background:rgba(10,14,26,.62);backdrop-filter:blur(22px);border:1px solid var(--line);
+  box-shadow:0 28px 70px rgba(0,0,0,.5);overflow:hidden}
+.visual::before{content:'';position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(234,179,8,.7),transparent)}
+.vhead{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.vdot{width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.15)}
+.vtitle{margin-left:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--muted-2);text-transform:uppercase}
+.vfoot{margin-top:16px;padding-top:13px;border-top:1px solid var(--line);font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--muted-2);display:flex;align-items:center;gap:8px}
+.vfoot .d{width:6px;height:6px;border-radius:99px;background:var(--green);box-shadow:0 0 9px var(--green);flex:none}
+.rowlist{display:flex;flex-direction:column;gap:11px}
+.rowlist>p{color:var(--muted-2);font-family:var(--mono);font-size:11.5px}
+.row{display:flex;align-items:center;gap:10px;font-size:12.7px;padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,.06)}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.row img{width:28px;height:28px;border-radius:99px;object-fit:cover;border:1px solid rgba(255,255,255,.18);flex:none}
+.row .who{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tk{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid var(--line);flex:none}
+.row .amt{margin-left:auto;font-family:var(--mono);font-size:11.5px;flex:none}
+.row .up{color:var(--green)}.row .dn{color:var(--red)}
+
+/* ═══════════ feature mini-cards ═══════════ */
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+@media(max-width:900px){.feat{grid-template-columns:1fr}}
+.fcard{padding:24px}
+.fcard .fic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:19px;background:rgba(255,255,255,.05);border:1px solid var(--line);margin-bottom:16px}
+.fcard h3{font-size:16px;font-weight:800;letter-spacing:-.015em;margin-bottom:8px}
+.fcard p{color:var(--muted);font-size:13.4px;line-height:1.65}
+.fcard p b{color:var(--text)}
+
+/* ═══════════ glossary ═══════════ */
+.gloss{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+@media(max-width:900px){.gloss{grid-template-columns:1fr}}
+.gcard{padding:24px}
+.gcard .code{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--cyan);margin-bottom:12px}
+.gcard h3{font-size:16.5px;font-weight:800;letter-spacing:-.015em;margin-bottom:9px}
+.gcard p{color:var(--muted);font-size:13.4px;line-height:1.65}
+.gcard .meta{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted-2);text-transform:uppercase}
+
+/* ═══════════ inside-the-app list ═══════════ */
+.inside{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:44px}
+@media(max-width:820px){.inside{grid-template-columns:1fr}}
+.ins{display:flex;gap:16px;padding:22px;border-radius:18px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(18px);
+  transition:border-color .25s,transform .25s var(--ease)}
+.ins:hover{border-color:rgba(34,211,238,.35);transform:translateY(-3px)}
+.ins .ic{width:42px;height:42px;border-radius:13px;flex:none;display:grid;place-items:center;font-size:19px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.ins h3{font-size:15.5px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}
+.ins p{color:var(--muted);font-size:13.2px;line-height:1.6}
+
+/* ═══════════ comparison ═══════════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:44px}
+@media(max-width:820px){.vs{grid-template-columns:1fr}}
+.vsc{border-radius:20px;padding:28px 26px;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(18px)}
+.vsc.good{border-color:rgba(34,197,94,.32);background:linear-gradient(180deg,rgba(34,197,94,.07),transparent 60%),var(--panel)}
+.vsc .vh{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);margin-bottom:18px}
+.vsc.good .vh{color:var(--green)}
+.vsc ul{list-style:none;display:flex;flex-direction:column;gap:13px}
+.vsc li{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--muted);line-height:1.6}
+.vsc li i{font-style:normal;flex:none;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:11px;margin-top:2px;
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.28);color:var(--red)}
+.vsc.good li i{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.35);color:var(--green)}
+.vsc.good li{color:var(--text)}
+
+/* ═══════════ shadow spotlight ═══════════ */
+.shadowviz{text-align:center;padding:8px 0 4px}
+.sv-lead{font-size:13px;color:var(--muted);margin-bottom:14px}
+.sv-hero{display:flex;align-items:baseline;justify-content:center;gap:12px;flex-wrap:wrap}
+.sv-base{font-family:var(--serif);font-size:clamp(1.3rem,3vw,1.9rem);color:var(--muted-2)}
+.sv-arrow{font-family:var(--mono);color:var(--gold);font-size:18px}
+.sv-end{font-family:var(--serif);font-size:clamp(1.8rem,4.4vw,2.8rem);color:var(--green);line-height:1}
+.spark{width:100%;height:70px;margin-top:18px;display:block}
+
+/* ═══════════ steps ═══════════ */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+@media(max-width:900px){.steps{grid-template-columns:1fr}}
+.step{padding:30px 26px}
+.step .sn{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cyan);margin-bottom:16px}
+.step h3{font-size:17.5px;font-weight:800;letter-spacing:-.015em;margin-bottom:9px}
+.step p{color:var(--muted);font-size:13.8px;line-height:1.68}
+
+/* ═══════════ FAQ + sources ═══════════ */
+.faq{margin-top:44px;display:grid;gap:10px}
+.fq{border-radius:16px;background:var(--panel);backdrop-filter:blur(18px);border:1px solid var(--line);overflow:hidden;transition:border-color .25s,background .25s}
+.fq[open]{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.03)}
+.fq summary{list-style:none;cursor:pointer;padding:20px 22px;display:flex;align-items:center;gap:14px;font-weight:700;font-size:15px}
+.fq summary::-webkit-details-marker{display:none}
+.fq summary::after{content:'+';margin-left:auto;font-family:var(--mono);font-size:20px;color:var(--cyan);transition:transform .3s var(--ease)}
+.fq[open] summary::after{transform:rotate(135deg)}
+.fq p{padding:0 22px 21px;color:var(--muted);font-size:14px;line-height:1.75;max-width:800px}
+.sources{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+.src-pill{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);
+  padding:10px 15px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid var(--line);transition:border-color .25s,color .25s}
+.src-pill:hover{border-color:rgba(34,197,94,.4);color:var(--text)}
+.src-pill .d{width:6px;height:6px;border-radius:99px;background:var(--green);box-shadow:0 0 9px var(--green);flex:none}
+.ctarow{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
+
+/* ═══════════ quote ═══════════ */
+.quote{position:relative;z-index:2;margin:clamp(96px,13vw,150px) auto;width:min(980px,92vw);text-align:center;padding:0 8px}
+.quote-card{position:relative;border-radius:28px;padding:clamp(44px,6vw,74px) clamp(22px,5vw,60px);
+  background:radial-gradient(130% 150% at 50% -10%,rgba(234,179,8,.10),transparent 55%),rgba(10,14,26,.5);
+  backdrop-filter:blur(22px);overflow:hidden;isolation:isolate}
+@property --qa{syntax:'<angle>';inherits:false;initial-value:0deg}
+.quote-card::before{content:'';position:absolute;inset:0;border-radius:28px;padding:1.5px;pointer-events:none;
+  background:conic-gradient(from var(--qa,0deg),rgba(234,179,8,.75),rgba(34,211,238,.55),rgba(124,252,177,.55),rgba(234,179,8,.75));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:qspin 9s linear infinite;opacity:.7}
+@keyframes qspin{to{--qa:360deg}}
+.quote-card::after{content:'';position:absolute;inset:-30% 8%;z-index:-1;pointer-events:none;
+  background:radial-gradient(50% 50% at 50% 45%,rgba(234,179,8,.16),transparent 70%);animation:qglow 6s ease-in-out infinite}
+@keyframes qglow{0%,100%{opacity:.35}50%{opacity:.7;transform:scale(1.05)}}
+.quote .qmark{font-family:var(--serif);font-size:clamp(60px,8vw,96px);line-height:.7;display:block;margin-bottom:18px;
+  background:linear-gradient(120deg,var(--gold),#7CFCB1,var(--cyan),var(--gold));background-size:280% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 26px rgba(234,179,8,.4));animation:holo 7s ease-in-out infinite,qfloat 6s ease-in-out infinite}
+@keyframes qfloat{50%{transform:translateY(-9px)}}
+.quote .q{font-family:var(--serif);font-size:clamp(1.5rem,3.6vw,2.5rem);line-height:1.42;color:var(--text)}
+.quote .q em{position:relative;font-style:normal;background:linear-gradient(100deg,#fff,var(--gold),#fff);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:holo 6s ease-in-out infinite}
+.quote .q em::after{content:'';position:absolute;left:0;right:0;bottom:-.14em;height:2px;transform:scaleX(0);transform-origin:left;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);transition:transform 1.1s var(--ease) .55s}
+.quote-card.in .q em::after{transform:scaleX(1)}
+.quote .attr{margin-top:28px;font-family:var(--mono);font-size:11.5px;letter-spacing:.26em;color:var(--muted)}
+.quote .sting{margin-top:30px;font-size:clamp(1.05rem,2vw,1.3rem);font-weight:700;color:var(--green);
+  text-shadow:0 0 24px rgba(34,197,94,.35);animation:stingpulse 3s ease-in-out infinite}
+@keyframes stingpulse{50%{text-shadow:0 0 36px rgba(34,197,94,.75)}}
+
+/* ═══════════ close + footer ═══════════ */
+.close{position:relative;z-index:2;width:min(820px,92vw);margin:0 auto 100px;text-align:center;border-radius:28px;padding:clamp(46px,6.5vw,70px) 30px;
+  background:radial-gradient(120% 160% at 50% 0%,rgba(34,197,94,.12),transparent 60%),var(--panel);
+  backdrop-filter:blur(20px);border:1px solid var(--line);overflow:hidden}
+.close::before{content:'';position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,197,94,.75),transparent)}
+.close h2{font-weight:800;letter-spacing:-.035em;font-size:clamp(1.8rem,4.4vw,2.8rem);line-height:1.08}
+.close p{color:var(--muted);margin-top:14px;font-size:15.5px}
+.close .ctas{display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+footer{position:relative;z-index:2;border-top:1px solid var(--line);padding:34px 20px 46px;text-align:center}
+footer p{color:var(--muted-2);font-size:11px;font-family:var(--mono);letter-spacing:.08em;margin-top:12px;line-height:1.9}
+
+/* ═══════════ reveal ═══════════ */
+.rv{opacity:0;transform:translateY(30px) scale(.985);filter:blur(4px);will-change:opacity,transform,filter;
+  transition:opacity .85s var(--ease),transform .9s var(--ease),filter .85s var(--ease)}
+.rv.in{opacity:1;transform:none;filter:none}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.2s!important}
+  .rv{opacity:1!important;transform:none!important;filter:none!important}
+  h1 .w{opacity:1!important;transform:none!important;filter:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog" aria-hidden="true"></div>
+<div class="cosmos" aria-hidden="true">
+  <div class="aurora a1"></div><div class="aurora a2"></div><div class="aurora a3"></div>
+  <div class="stars" id="stars"></div>
+  <div class="gridfloor"></div>
+  <div class="scanline"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<nav id="nav">
+  <a class="logo" href="/"><span class="m">G</span> Giant Money</a>
+  <div class="links">
+    <a href="#f-top1">Top 1%</a><a href="#f-politicians">Politicians</a><a href="#f-insiders">Insiders</a><a href="#inside">Inside</a><a href="#glossary">Glossary</a><a href="#faq">FAQ</a>
+    <a class="btn btn-neon" href="/app" style="margin-left:8px">Open App →</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="hud-chip mono"><span class="dot"></span> LIVE · SEC EDGAR · US CONGRESS · 13F FILINGS</div>
+  <h1 id="heroH1">Track the <span class="holo">Billionaires</span><br>&amp; <span class="holo">Politicians</span>.</h1>
+  <p class="sub">Every disclosed trade from the world's most powerful investors and US Congress — decoded the moment it's filed. <b>Their moves. Your screen. Zero delay.</b></p>
+  <div class="ctas">
+    <a class="btn btn-neon" href="/app">Get the Edge →</a>
+    <a class="btn btn-ghost" href="#f-top1">Explore what's inside ↓</a>
+  </div>
+  <div class="note mono">FREE · LIVE PUBLIC DATA · NOT INVESTMENT ADVICE</div>
+
+  <div class="hud-stage" id="hudStage">
+    <div class="hud f1" data-tilt>
+      <div class="sweep"></div>
+      <div class="k">MARKET · S&amp;P 500</div>
+      <div class="v" id="hIdx">—</div>
+      <span class="tag" id="hIdxTag">LIVE FEED</span>
+    </div>
+    <div class="hud f2" data-tilt>
+      <div class="sweep"></div>
+      <div class="k">CONGRESS · LATEST DISCLOSED TRADE</div>
+      <div class="who" id="hPol"><div class="nm">Syncing filings…<i>STOCK ACT · PTR</i></div></div>
+      <span class="tag gold" id="hPolTag">FORM PTR-1</span>
+    </div>
+    <div class="hud f3" data-tilt>
+      <div class="sweep"></div>
+      <div class="k">TOP 1% · LATEST 13F MOVE</div>
+      <div class="who" id="hFund"><div class="nm">Syncing filings…<i>SEC 13F-HR</i></div></div>
+      <span class="tag" id="hFundTag">13F-HR</span>
+    </div>
+  </div>
+  <div class="scroll-cue"><span class="bar"></span> SCROLL</div>
+</header>
+
+<div class="marq"><div class="marq-in" id="marq">LOADING LIVE SMART-MONEY FEED…</div></div>
+
+<div class="statband rv">
+  <div class="stat"><div class="n" id="sTracked">—</div><div class="l">Assets tracked</div></div>
+  <div class="stat"><div class="n" id="sFunds">—</div><div class="l">Giants monitored</div></div>
+  <div class="stat"><div class="n" id="sStocks">—</div><div class="l">US stocks covered</div></div>
+  <div class="stat"><div class="n">24/7</div><div class="l">Filing watch loop</div></div>
+</div>
+
+<!-- ═══ WHAT JUST HAPPENED · the page's proof that it is alive ═══ -->
+<section class="sect happened" id="happened">
+  <div class="hp-head rv">
+    <span class="hp-dot"></span>
+    <span class="hp-k">What just happened</span>
+    <span class="hp-when" id="hpWhen"></span>
+  </div>
+  <div class="hp-list" id="hpList">
+    <div class="hp-row"><span class="hp-src">…</span><span class="hp-txt">Reading the latest filings…</span></div>
+  </div>
+</section>
+
+<!-- ═══ TOP 1% ═══ -->
+<section class="sect" id="f-top1">
+  <div class="eyebrow rv">TOP 1% · SMART MONEY</div>
+  <h2 class="rv">See what the world's<br><span class="hl">richest investors</span> own.</h2>
+  <div class="split">
+    <div>
+      <p class="dek rv">Any institution managing over <b>$100 million</b> must report its entire US stock portfolio to the SEC every quarter, on a form called the <b>13F-HR</b>. That includes Warren Buffett's Berkshire Hathaway, Ray Dalio's Bridgewater, Goldman Sachs, and the sovereign wealth funds of Norway, Saudi Arabia, Qatar, Singapore and the UAE.</p>
+      <p class="dek rv">The filings are public — but they arrive as dense, machine-unfriendly documents that almost nobody reads. We parse every one, compare it against the previous quarter, and hand you the answer in plain English.</p>
+      <div class="sc-list">
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Full portfolios.</b> Every holding, its dollar value, and its weight in the portfolio.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Quarter-over-quarter changes</b> tagged automatically as New, Added, Trimmed or Exited.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Four categories</b> to filter by — billionaires, hedge funds, investment banks and sovereign wealth funds, with country flags.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Shadow Portfolio</b> on every profile: what $10,000 copying them a year ago would be worth today.</div></div>
+      </div>
+      <div class="ctarow rv"><a class="btn btn-neon" href="/app#top1">Open Top 1% →</a></div>
+    </div>
+    <div class="visual rv">
+      <div class="vhead"><span class="vdot"></span><span class="vdot"></span><span class="vdot"></span><span class="vtitle">Latest 13F moves · live</span></div>
+      <div class="rowlist" id="bTop1"><p>Syncing filings…</p></div>
+      <div class="vfoot"><span class="d"></span> SEC EDGAR · 13F-HR · UPDATED QUARTERLY</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ POLITICIANS ═══ -->
+<section class="sect" id="f-politicians">
+  <div class="eyebrow rv">US CONGRESS · STOCK ACT</div>
+  <h2 class="rv">Watch how your<br><span class="hl">representatives</span> trade.</h2>
+  <div class="split">
+    <div>
+      <p class="dek rv">The <b>STOCK Act of 2012</b> makes it illegal for members of Congress to trade on non-public information — and requires every one of them to publicly disclose their personal stock trades within 45 days, on a <b>Periodic Transaction Report</b>.</p>
+      <p class="dek rv">These filings reveal something remarkable: lawmakers trading in the very industries their committees regulate, sometimes days before major news. We collect every disclosure from both the House and the Senate and make it searchable.</p>
+      <div class="sc-list">
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Every disclosed trade</b> — member, ticker, buy or sell, size range and both dates.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Disclosure lag shown</b> so you can see exactly how long they sat on it before reporting.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Rankings &amp; Smart Signals</b> — the most active traders, and stocks many members are buying at once.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Congress Portfolios</b> — one-year paper backtests for the Senate, the House and all of Congress.</div></div>
+      </div>
+      <div class="ctarow rv"><a class="btn btn-neon" href="/app#politicians">Open Politicians →</a></div>
+    </div>
+    <div class="visual rv">
+      <div class="vhead"><span class="vdot"></span><span class="vdot"></span><span class="vdot"></span><span class="vtitle">Newest disclosures · live</span></div>
+      <div class="rowlist" id="bPol"><p>Syncing filings…</p></div>
+      <div class="vfoot"><span class="d"></span> HOUSE CLERK PTR + US SENATE eFD</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INSIDERS ═══ -->
+<section class="sect" id="f-insiders">
+  <div class="eyebrow rv">SEC FORM 4 · LIVE</div>
+  <h2 class="rv">Follow the people who<br>know the <span class="hl">company best</span>.</h2>
+  <div class="split">
+    <div>
+      <p class="dek rv">Company officers, directors and anyone owning more than 10% of a company are called <b>insiders</b>. When they buy or sell their own company's stock, US law gives them just <b>two business days</b> to file a <b>Form 4</b> with the SEC.</p>
+      <p class="dek rv">This is the fastest-moving disclosure in the market — and the most revealing. An executive spending their own money on their own stock is making a statement no press release can match.</p>
+      <div class="sc-list">
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Open-market buys separated</b> from routine option exercises — real conviction, not paperwork.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Cluster detection.</b> Several insiders at one company buying together is flagged automatically.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Role breakdown</b> — CEO, CFO, Director or 10% owner, so you know whose money is moving.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Per-stock sentiment</b> from the overall balance of insider buying versus selling.</div></div>
+      </div>
+      <div class="ctarow rv"><a class="btn btn-neon" href="/app#insiders">Open Insiders →</a></div>
+    </div>
+    <div class="visual rv">
+      <div class="vhead"><span class="vdot"></span><span class="vdot"></span><span class="vdot"></span><span class="vtitle">Recent Form 4 filings · live</span></div>
+      <div class="rowlist" id="bIns"><p>Syncing filings…</p></div>
+      <div class="vfoot"><span class="d"></span> SEC FORM 4 · WITHIN 2 BUSINESS DAYS</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SHADOW PORTFOLIO ═══ -->
+<section class="sect">
+  <div class="eyebrow rv">THE SIGNATURE FEATURE</div>
+  <h2 class="rv">“If I'd copied them<br>a year ago…”</h2>
+  <div class="split">
+    <div>
+      <p class="dek rv">The question everyone asks — finally answered with real numbers. We take an investor's <b>actually disclosed holdings</b>, price them at <b>real historical closes</b>, and show what $10,000 would have become over the past year.</p>
+      <div class="sc-list">
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Real holdings, real prices.</b> No simulation and no assumptions — just the filings and the tape.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Benchmarked against the S&amp;P 500</b> over the identical window, so you know if they genuinely beat the market.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Top drivers shown</b> — which individual stocks carried the return, and which dragged it down.</div></div>
+        <div class="sc-item rv"><span class="ck">✓</span><div><b>Paper only. Always.</b> A virtual backtest for perspective — never a trade, never advice.</div></div>
+      </div>
+    </div>
+    <div class="visual rv">
+      <div class="vhead"><span class="vdot"></span><span class="vdot"></span><span class="vdot"></span><span class="vtitle">Shadow Portfolio · paper backtest</span></div>
+      <div class="shadowviz">
+        <div class="sv-lead">If you'd copied them a year ago…</div>
+        <div class="sv-hero"><span class="sv-base">$10,000</span><span class="sv-arrow">→</span><span class="sv-end">$10,600</span></div>
+        <svg class="spark" viewBox="0 0 320 70" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#22C55E" stop-opacity=".30"/><stop offset="100%" stop-color="#22C55E" stop-opacity="0"/>
+          </linearGradient></defs>
+          <polygon points="0,52 40,47 80,54 120,38 160,42 200,28 240,33 280,18 320,12 320,70 0,70" fill="url(#sg)"/>
+          <polyline points="0,52 40,47 80,54 120,38 160,42 200,28 240,33 280,18 320,12" fill="none" stroke="#22C55E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="vfoot"><span class="d"></span> ILLUSTRATIVE SHAPE · EACH PROFILE SHOWS ITS OWN REAL CURVE</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INSIDE THE APP ═══ -->
+<section class="sect" id="inside">
+  <div class="eyebrow rv">INSIDE THE PLATFORM</div>
+  <h2 class="rv">Seven screens.<br>One complete <span class="hl">picture</span>.</h2>
+  <p class="dek rv">Giant Money isn't a single feed — it's a full research terminal. Here's everything you get the moment you open the app.</p>
+  <div class="inside">
+    <div class="ins rv"><div class="ic">📊</div><div><h3>Dashboard</h3><p>The whole US market at a glance — five major indexes, today's institutional stock picks ranked by our Giant Money Score, the weekly Wall of Fame and Wall of Shame, and “Who Bought Before the News?” linking today's biggest movers back to who was quietly buying 14 days earlier.</p></div></div>
+    <div class="ins rv"><div class="ic">👑</div><div><h3>Top 1%</h3><p>Every tracked billionaire, hedge fund, investment bank and sovereign wealth fund, with full portfolios, quarter-over-quarter position changes and a Shadow Portfolio backtest on each profile.</p></div></div>
+    <div class="ins rv"><div class="ic">🏛</div><div><h3>Politicians</h3><p>Congressional trades with four views — the raw trade feed, performance rankings, smart signals where many members buy the same stock, and copy-the-chamber portfolio backtests.</p></div></div>
+    <div class="ins rv"><div class="ic">💼</div><div><h3>Insiders</h3><p>Live Form 4 filings, cluster-buy alerts, breakdowns by executive role, activity rankings and per-stock insider sentiment.</p></div></div>
+    <div class="ins rv"><div class="ic">📈</div><div><h3>Stocks</h3><p>Research any US ticker — live price with candlestick and line charts across multiple ranges, real fundamentals from SEC filings, an ownership breakdown showing smart money versus everyone else, plus related stocks, government contracts and politician sentiment for that company.</p></div></div>
+    <div class="ins rv"><div class="ic">📰</div><div><h3>News</h3><p>Financial news from live feeds, sorted into categories, with a plain-English AI brief on every article: what happened, and why it actually matters.</p></div></div>
+    <div class="ins rv"><div class="ic">⭐</div><div><h3>Watchlist &amp; Alerts</h3><p>Save any US stock. The backend keeps refreshing its price and checking for new smart-money activity even while you're away, and the alerts bell surfaces real events as they land.</p></div></div>
+    <div class="ins rv"><div class="ic">👤</div><div><h3>Profile</h3><p>Your account view — saved stocks, live watchlist performance and your personal settings, all stored on your own device.</p></div></div>
+  </div>
+</section>
+
+<!-- ═══ GLOSSARY ═══ -->
+<section class="sect" id="glossary">
+  <div class="eyebrow rv">KNOW THE FILINGS</div>
+  <h2 class="rv">The six documents that<br>reveal <span class="hl">everything</span>.</h2>
+  <p class="dek rv">Every number on Giant Money traces back to one of these official filings. Learn them once and you'll read the market like a professional.</p>
+  <div class="gloss">
+    <div class="gcard glowcard rv"><div class="code">FORM 13F-HR</div><h3>Institutional holdings</h3><p>Filed quarterly by every institution managing over $100 million. Lists their complete US stock portfolio — every position and its market value.</p><div class="meta">Quarterly · 45 days after quarter end</div></div>
+    <div class="gcard glowcard rv"><div class="code">FORM 4</div><h3>Insider transactions</h3><p>Filed when a company's officer, director or 10%+ owner buys or sells that company's stock. The fastest disclosure in US markets.</p><div class="meta">Within 2 business days</div></div>
+    <div class="gcard glowcard rv"><div class="code">PTR · STOCK ACT</div><h3>Congressional trades</h3><p>The Periodic Transaction Report every member of Congress must file after a personal securities trade, showing ticker, direction and a value range.</p><div class="meta">Within 30–45 days</div></div>
+    <div class="gcard glowcard rv"><div class="code">CLUSTER BUY</div><h3>Multiple insiders, one window</h3><p>When several executives at the same company purchase shares within a short period. Historically one of the strongest conviction signals available.</p><div class="meta">Detected automatically</div></div>
+    <div class="gcard glowcard rv"><div class="code">DISCLOSURE LAG</div><h3>Trade date vs filing date</h3><p>The gap between when a trade happened and when the public found out. We always show both dates so you can judge how fresh the information really is.</p><div class="meta">Shown on every trade</div></div>
+    <div class="gcard glowcard rv"><div class="code">SHADOW PORTFOLIO</div><h3>The copy-them backtest</h3><p>A virtual, paper-only simulation applying real disclosed holdings to real historical prices, benchmarked against the S&amp;P 500 over the same window.</p><div class="meta">Paper only · not advice</div></div>
+  </div>
+</section>
+
+<!-- ═══ COMPARISON ═══ -->
+<section class="sect">
+  <div class="eyebrow rv">WHY IT MATTERS</div>
+  <h2 class="rv">The information was always<br>public. Just never <span class="hl">usable</span>.</h2>
+  <div class="vs">
+    <div class="vsc rv">
+      <div class="vh">Doing it yourself</div>
+      <ul>
+        <li><i>✕</i><div>Hunt through EDGAR for raw 13F documents, one CIK at a time.</div></li>
+        <li><i>✕</i><div>Open scanned PDF disclosures from the House Clerk and read them by hand.</div></li>
+        <li><i>✕</i><div>Manually diff this quarter's holdings against last quarter's to spot a single change.</div></li>
+        <li><i>✕</i><div>Build your own price history to check whether any of it actually worked.</div></li>
+        <li><i>✕</i><div>Repeat every single day, forever, or miss the move entirely.</div></li>
+      </ul>
+    </div>
+    <div class="vsc good rv">
+      <div class="vh">With Giant Money</div>
+      <ul>
+        <li><i>✓</i><div>Every filer parsed, searchable and ranked in one grid.</div></li>
+        <li><i>✓</i><div>Congressional trades in plain English with party, chamber and lag context.</div></li>
+        <li><i>✓</i><div>Position changes tagged automatically: New, Added, Trimmed, Exited.</div></li>
+        <li><i>✓</i><div>One-year paper backtests benchmarked against the S&amp;P 500, built in.</div></li>
+        <li><i>✓</i><div>A loop that watches 24/7 so you don't have to. Free, forever.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="sect" id="faq">
+  <div class="eyebrow rv">QUESTIONS</div>
+  <h2 class="rv">Everything you're<br>about to ask.</h2>
+  <div class="faq">
+    <details class="fq rv"><summary>Is this real data or a simulation?</summary><p>100% real. Every number comes from an official public filing — SEC EDGAR, the House Clerk, the US Senate, and live market data. We never invent a figure: if something hasn't been filed yet, you see a dash, not a guess.</p></details>
+    <details class="fq rv"><summary>Is it legal to see these trades?</summary><p>Completely. US law requires this disclosure — 13F holdings reports for large institutional managers, the STOCK Act for Congress, and Section 16 Form 4s for company insiders. It is all public record. Most people simply never look.</p></details>
+    <details class="fq rv"><summary>How delayed is the information?</summary><p>That depends on the law, not on us. Form 4 insider trades land within two business days. Congressional PTRs allow up to roughly 45 days. 13F fund holdings are quarterly. We surface each one the moment it's published — and always show the filing date so you can judge for yourself.</p></details>
+    <details class="fq rv"><summary>Does Giant Money cost anything?</summary><p>No. It's free, and there is no real money anywhere in the product — no trading, no brokerage account, no entry fees. The Shadow Portfolio is a paper backtest only.</p></details>
+    <details class="fq rv"><summary>Is this investment advice?</summary><p>No — and it never will be. Giant Money is an information platform that shows what powerful investors have publicly disclosed. What you do with that information is entirely your own decision. We are not licensed financial advisors.</p></details>
+    <details class="fq rv"><summary>Where does the data actually come from?</summary><p>SEC EDGAR for 13F-HR holdings and Form 4 insider trades, the House Clerk's PTR system and the Senate eFD portal for congressional disclosures, USAspending.gov for federal contract awards, and live market feeds for prices. Every source is official and public.</p></details>
+    <details class="fq rv"><summary>Do I need to know anything about investing?</summary><p>No. Every screen is written for beginners — plain-English explanations sit at the top of each page, jargon is defined inline, and the numbers are formatted so you can read them at a glance. The Glossary section above covers every filing type you'll encounter.</p></details>
+    <details class="fq rv"><summary>How often does the data update?</summary><p>A backend loop runs continuously, 24 hours a day, whether or not anyone has the app open. Prices refresh throughout the trading day; filings are ingested as soon as they appear at the source.</p></details>
+  </div>
+  <div class="sources rv">
+    <span class="src-pill"><span class="d"></span> SEC EDGAR · 13F-HR</span>
+    <span class="src-pill"><span class="d"></span> SEC · FORM 4</span>
+    <span class="src-pill"><span class="d"></span> US HOUSE CLERK · PTR</span>
+    <span class="src-pill"><span class="d"></span> US SENATE · eFD</span>
+    <span class="src-pill"><span class="d"></span> LIVE MARKET DATA</span>
+    <span class="src-pill"><span class="d"></span> USASPENDING.GOV</span>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS · near the end, right before the close ═══ -->
+<section class="sect" id="how">
+  <div class="eyebrow rv">HOW IT WORKS</div>
+  <h2 class="rv">Filed to your screen<br>in <span class="hl">three moves</span>.</h2>
+  <div class="steps">
+    <div class="step glowcard rv"><div class="sn">STEP 01</div><h3>They file</h3><p>The law forces disclosure — 13F holdings every quarter, Form 4 insider trades within two business days, and PTRs from every member of the House and Senate.</p></div>
+    <div class="step glowcard rv"><div class="sn">STEP 02</div><h3>We decode</h3><p>Our backend loop runs 24/7, pulling each filing the moment it's published and parsing dense legal documents into plain English.</p></div>
+    <div class="step glowcard rv"><div class="sn">STEP 03</div><h3>You act</h3><p>Rankings, signals, alerts and one-year paper backtests — the same edge the giants have always had, on your screen, for free.</p></div>
+  </div>
+</section>
+
+<!-- ═══ QUOTE ═══ -->
+<section class="quote">
+  <div class="quote-card rv">
+    <span class="qmark">“</span>
+    <p class="q">Wall Street never changes. The pockets change, the suckers change, the stocks change — <em>but Wall Street never changes.</em></p>
+    <div class="attr">— JESSE LIVERMORE · LEGENDARY TRADER · 1923</div>
+    <div class="sting">This time, you're not the sucker.</div>
+  </div>
+</section>
+
+<!-- ═══ CLOSE ═══ -->
+<section class="close rv">
+  <h2>Get the edge they've<br>had for 200 years.</h2>
+  <p>Free to join. No real money. No entry fees. Just intelligence.</p>
+  <div class="ctas">
+    <a class="btn btn-neon" href="/app">Get the Edge →</a>
+    <a class="btn btn-ghost" href="/app#top1">Explore the Top 1% →</a>
+  </div>
+</section>
+
+<footer>
+  <a class="logo" style="justify-content:center;display:inline-flex"><span class="m">G</span> Giant Money</a>
+  <p>GIANT MONEY IS AN INFORMATION PLATFORM · NOT INVESTMENT ADVICE · PAPER TRADING ONLY<br>
+     ALL DATA FROM OFFICIAL PUBLIC FILINGS · SEC · US CONGRESS</p>
+</footer>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s);
+const setHTML = (sel, html) => { const el = $(sel); if (el) el.innerHTML = html; };
+const setText = (sel, txt) => { const el = $(sel); if (el) el.textContent = txt; };
+
+/* ── stars ── */
+let sHTML = '';
+for (let i = 0; i < 26; i++) sHTML += `<i style="left:${Math.random()*100}%;top:${Math.random()*70}%;animation-delay:${(Math.random()*4).toFixed(2)}s;opacity:${(.2+Math.random()*.6).toFixed(2)}"></i>`;
+$('#stars').innerHTML = sHTML;
+
+/* ── hero headline: word-by-word entrance ── */
+if (!RM) {
+  let wi = 0;
+  const wrapWords = node => {
+    [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(part => {
+          if (!part.trim()) return frag.appendChild(document.createTextNode(part));
+          const s = document.createElement('span');
+          s.className = 'w';
+          s.style.animationDelay = (wi++ * 0.075).toFixed(3) + 's';
+          s.textContent = part;
+          frag.appendChild(s);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== 'BR') {
+        n.classList.add('w');
+        n.style.animationDelay = (wi++ * 0.075).toFixed(3) + 's';
+      }
+    });
+  };
+  wrapWords($('#heroH1'));
+}
+
+/* ── scroll reveal with stagger cascade ── */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: .15 });
+document.querySelectorAll('.rv').forEach(el => {
+  const sibs = [...el.parentElement.children].filter(c => c.classList.contains('rv'));
+  const i = sibs.indexOf(el);
+  if (i > 0) el.style.transitionDelay = (i * 0.075).toFixed(3) + 's';
+  RM ? el.classList.add('in') : io.observe(el);
+});
+
+/* ── progress bar + nav solidify + horizon fade ──
+   the cosmos layer is position:fixed and must NEVER be translated:
+   sliding it exposes a black gap on top and drags the grid down. */
+const prog = $('#prog'), navEl = $('#nav'), floor = $('.gridfloor');
+let tick = false;
+const onScroll = () => {
+  if (tick) return;
+  tick = true;
+  requestAnimationFrame(() => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    prog.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    navEl.classList.toggle('solid', scrollY > 40);
+    if (!RM && floor) floor.style.opacity = Math.max(0, 1 - scrollY / (innerHeight * 0.8)).toFixed(3);
+    tick = false;
+  });
+};
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ── cursor-tracked glow + HUD tilt ── */
+if (!RM && matchMedia('(hover:hover)').matches) {
+  document.querySelectorAll('.glowcard').forEach(c => {
+    c.addEventListener('pointermove', e => {
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+  const stage = $('#hudStage');
+  if (stage) {
+    stage.addEventListener('pointermove', e => {
+      document.querySelectorAll('[data-tilt]').forEach(card => {
+        const r = card.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
+        const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
+        card.style.transform = `rotateY(${dx * 7}deg) rotateX(${dy * -7}deg) translateZ(6px)`;
+      });
+    });
+    stage.addEventListener('pointerleave', () => {
+      document.querySelectorAll('[data-tilt]').forEach(c => c.style.transform = '');
+    });
+  }
+}
+
+/* ═══ hydrate with REAL live data (never fabricated — gaps stay "—") ═══ */
+const pct = v => v == null ? '' : (v > 0 ? '+' : '') + Number(v).toFixed(2) + '%';
+const abbrev = v => {
+  const n = Math.abs(Number(v) || 0);
+  if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T';
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+  return String(Math.round(n));
+};
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const bRow = (photo, who, tk, amt, up) => `<div class="row">
+  ${photo ? `<img src="${esc(photo)}" alt="" onerror="this.remove()">` : ''}
+  <span class="who">${esc(who)}</span>
+  ${tk ? `<span class="tk">${esc(tk)}</span>` : ''}
+  ${amt ? `<span class="amt ${up ? 'up' : 'dn'}">${esc(amt)}</span>` : ''}
+</div>`;
+function countUp(sel, to, fmt) {
+  const el = $(sel);
+  if (!el || to == null) return;
+  if (RM) { el.textContent = fmt(to); return; }
+  const io2 = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    io2.disconnect();
+    const t0 = performance.now(), dur = 1500;
+    const step = now => {
+      const p = Math.min((now - t0) / dur, 1);
+      el.textContent = fmt(to * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }), { threshold: .4 });
+  io2.observe(el);
+}
+
+fetch('/api/landing').then(r => r.json()).then(d => {
+  // S&P 500 → hero HUD
+  const spx = (d.indexes || []).find(i => i.symbol === '^GSPC') || (d.indexes || [])[0];
+  if (spx?.price != null) {
+    const up = (spx.change_1d ?? 0) >= 0;
+    setHTML('#hIdx', `${Number(spx.price).toLocaleString('en-US',{maximumFractionDigits:2})} <small class="${up?'up':'dn'}">${pct(spx.change_1d)}</small>`);
+    setText('#hIdxTag', spx.market_state === 'Open' ? '● MARKET OPEN' : '● MARKET CLOSED');
+  }
+  // latest politician trade (prefer a Buy) → hero HUD
+  const p = (d.politicianRows || []).find(r => r.side === 'Buy') || (d.politicianRows || [])[0];
+  if (p) {
+    setHTML('#hPol', `${p.photo ? `<img src="${esc(p.photo)}" alt="" onerror="this.remove()">` : ''}
+      <div class="nm">${esc(p.name)}<i>${esc((p.side||'').toUpperCase())} · ${esc(p.ticker || '—')} · ${esc(p.amount || '')}</i></div>`);
+    setText('#hPolTag', (p.party || 'CONGRESS').toUpperCase().slice(0,14) + ' · ' + (p.side || '').toUpperCase());
+  }
+  // latest 13F move → hero HUD
+  const f = (d.top1Rows || [])[0];
+  if (f) {
+    setHTML('#hFund', `${f.photo ? `<img src="${esc(f.photo)}" alt="" onerror="this.remove()">` : ''}
+      <div class="nm">${esc(f.who)}<i>${esc((f.action||'').toUpperCase())} · ${esc(f.ticker || f.issuer || '')}</i></div>`);
+    const tag = $('#hFundTag');
+    if (tag) { tag.textContent = f.up ? '▲ ADDED' : '▼ REDUCED'; tag.className = 'tag' + (f.up ? '' : ' gold'); }
+  }
+  // marquee
+  const items = (d.marquee || []).slice(0, 16).map(m => {
+    const amt = m.amt ? ` <span class="${m.up ? 'up' : 'dn'}">${esc(m.amt)}</span>` : '';
+    const tk = m.ticker ? `<b style="color:var(--text)">${esc(m.ticker)}</b> ` : '';
+    return `${tk}${esc(m.who || '')} ${esc(m.did || '')}${amt}`;
+  }).join('<span class="sep">◆</span>');
+  if (items) setHTML('#marq', items + '<span class="sep">◆</span>' + items);
+
+  // "What just happened" — the newest real filings, so a returning visitor sees
+  // something different rather than the same fixed marketing copy.
+  // One row per company, and never more than two from the same source, so a
+  // single batch of Form 4s from one issuer cannot fill the whole block.
+  const seenTicker = new Set(), kindCount = {};
+  const feed = (d.marquee || []).filter(m => {
+    const t = String(m.ticker || '').toUpperCase();
+    if (!t || seenTicker.has(t)) return false;
+    const k = m.kind || '?';
+    if ((kindCount[k] ?? 0) >= 2) return false;
+    seenTicker.add(t); kindCount[k] = (kindCount[k] ?? 0) + 1;
+    return true;
+  }).slice(0, 6);
+  if (feed.length) {
+    setHTML('#hpList', feed.map(m => {
+      const up = m.up;
+      return `<div class="hp-row">
+        <span class="hp-src">${esc(m.kind || '')}</span>
+        <span class="hp-tk">${esc(m.ticker || '—')}</span>
+        <span class="hp-txt">${esc(m.who || '')} ${esc(m.did || '')}</span>
+        ${m.amt ? `<span class="hp-amt ${up ? 'up' : 'dn'}">${esc(m.amt)}</span>` : ''}
+      </div>`;
+    }).join(''));
+    setText('#hpWhen', 'live from SEC & Congress filings');
+  } else {
+    setHTML('#hpList', '<div class="hp-row"><span class="hp-txt">No new filings in the last window — the loop keeps watching.</span></div>');
+  }
+
+  // stats band — real counts
+  const bs = d.bigStats || {};
+  if (bs.trackedValue) countUp('#sTracked', bs.trackedValue, v => '$' + abbrev(v));
+  if (bs.funds) countUp('#sFunds', bs.funds, v => Math.round(v).toLocaleString('en-US'));
+  if (bs.stocks) countUp('#sStocks', bs.stocks, v => Math.round(v).toLocaleString('en-US'));
+
+  // live panels inside each feature section
+  const t1 = (d.top1Rows || []).slice(0, 5);
+  if (t1.length) setHTML('#bTop1', t1.map(r =>
+    bRow(r.photo, r.who, r.ticker, `${r.up ? '+' : '−'}$${abbrev(r.dv)}`, r.up)).join(''));
+  const pr = (d.politicianRows || []).slice(0, 5);
+  if (pr.length) setHTML('#bPol', pr.map(r =>
+    bRow(r.photo, r.name, r.ticker, (r.side || '').toUpperCase(), r.side === 'Buy')).join(''));
+  const ir = (d.insiderRows || []).slice(0, 5);
+  if (ir.length) setHTML('#bIns', ir.map(r =>
+    bRow(null, r.insider_name, r.ticker, `${r.side === 'Buy' ? '+' : '−'}$${abbrev(r.value)}`, r.side === 'Buy')).join(''));
+}).catch(() => { /* server offline — placeholders stay honest */ });
+</script>
+</body>
+</html>
