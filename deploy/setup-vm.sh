@@ -4,7 +4,7 @@
 # Works on any always-free VM with a real disk: Google Cloud e2-micro,
 # Oracle Cloud Always Free, AWS t3.micro, or any VPS.
 #
-# Usage, from the VM's own shell:
+# Usage, from the VM's own shell:# Usage, from the VM's own shell:# Usage, from the VM's own shell:
 #   curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/giant-money/main/deploy/setup-vm.sh | bash -s -- YOUR_USERNAME your@email.com
 #
 # Or clone first and run ./deploy/setup-vm.sh YOUR_USERNAME your@email.com
